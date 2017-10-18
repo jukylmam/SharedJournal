@@ -1,4 +1,4 @@
-package rtdsd.groupwork.sharedjournal;
+package rtdsd.groupwork.sharedjournal.viewmodel;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
@@ -8,6 +8,7 @@ import android.arch.lifecycle.MutableLiveData;
 import java.util.ArrayList;
 import java.util.List;
 
+import rtdsd.groupwork.sharedjournal.viewmodel.JournalLiveData;
 import rtdsd.groupwork.sharedjournal.model.RpgJournal;
 
 /**
