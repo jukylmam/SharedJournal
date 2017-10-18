@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="rtdsd.groupwork.sharedjournal.SessionsActivity"
+    tools:showIn="@layout/activity_sessions"
+    android:id="@+id/fragmentLayout">
+
+
+    <!-- fragment for displaying sessions list -->
+    <!--<fragment
+        android:name="rtdsd.groupwork.sharedjournal.SessionsFragment"
+        android:id="@+id/sessionsFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </fragment> -->
+
+</android.support.constraint.ConstraintLayout>

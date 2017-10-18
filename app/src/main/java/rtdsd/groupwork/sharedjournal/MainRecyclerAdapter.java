@@ -1,6 +1,7 @@
 package rtdsd.groupwork.sharedjournal;
 
 
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -38,7 +39,8 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         //data is bound to the viewholder
-        final String journalName = journals.get(position).getName();
+        final RpgJournal journal = journals.get(position);
+        final String journalName = journal.getName();
 
         Log.d(TAG, "onBindViewHolder: adding new journal entry with name " + journalName);
         Log.d(TAG, "onBindViewHolder: journals size: " + journals.size());
@@ -47,6 +49,10 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "row with text: " + journalName + " clicked");
+                Intent i = new Intent(view.getContext(), SessionsActivity.class);
+                i.putExtra(SessionsActivity.EXTRA_JOURNAL_ID, journal.getId());
+                view.getContext().startActivity(i);
+
             }
         });
     }
@@ -60,7 +66,7 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
         // TODO: 17.10.2017 make a more reasonable way to check if journal already in journals
         boolean journalExists = false;
         for(int i = 0; i < journals.size(); i++){
-            if(journal.getId() == journals.get(i).getId())
+            if(journal.getId().equals(journals.get(i).getId()))
                 journalExists = true;
         }
 
