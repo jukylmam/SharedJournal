@@ -60,7 +60,7 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
         // TODO: 17.10.2017 make a more reasonable way to check if journal already in journals
         boolean journalExists = false;
         for(int i = 0; i < journals.size(); i++){
-            if(journal.getId() == journals.get(i).getId())
+            if(journal.getId().equals(journals.get(i).getId()))
                 journalExists = true;
         }
 
