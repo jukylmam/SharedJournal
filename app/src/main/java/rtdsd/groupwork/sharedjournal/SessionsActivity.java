@@ -3,12 +3,16 @@ package rtdsd.groupwork.sharedjournal;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+
+import rtdsd.groupwork.sharedjournal.nearbyFragment.JournalSharingFragment;
 
 public class SessionsActivity extends AppCompatActivity implements SessionsFragment.OnFragmentInteractionListener{
 
@@ -18,6 +22,7 @@ public class SessionsActivity extends AppCompatActivity implements SessionsFragm
     private static final String SESSIONS_FRAGMENT_TAG = "sessionsFragment";
 
     private String journalId;
+    private Button shareJournalButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +30,8 @@ public class SessionsActivity extends AppCompatActivity implements SessionsFragm
         setContentView(R.layout.activity_sessions);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        shareJournalButton = findViewById(R.id.journal_share_button);
 
         journalId = getIntent().getStringExtra(EXTRA_JOURNAL_ID);
 
@@ -38,6 +45,18 @@ public class SessionsActivity extends AppCompatActivity implements SessionsFragm
         SessionsFragment sessionsFragment = SessionsFragment.newInstance(journalId,"");
         transaction.add(R.id.fragmentLayout, sessionsFragment, SESSIONS_FRAGMENT_TAG);
         transaction.commit();
+
+
+        shareJournalButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Fragment sharingFragment = new JournalSharingFragment();
+                FragmentTransaction shareButtonTransaction = getSupportFragmentManager().beginTransaction();
+                shareButtonTransaction.replace(R.id.fragmentLayout, sharingFragment);
+                shareButtonTransaction.addToBackStack(null);
+                shareButtonTransaction.commit();
+            }
+        });
     }
 
     @Override
