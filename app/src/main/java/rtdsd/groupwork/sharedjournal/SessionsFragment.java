@@ -82,8 +82,8 @@ public class SessionsFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_sessions, container, false);
 
         RecyclerView recyclerView = v.findViewById(R.id.sessionsList);
-        final SessionsRecyclerAdapter adapter = new SessionsRecyclerAdapter();
-        recyclerView.setAdapter(adapter);
+        final SessionsRecyclerAdapter sessionsAdapter = new SessionsRecyclerAdapter();
+        recyclerView.setAdapter(sessionsAdapter);
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(manager);
 
@@ -98,11 +98,7 @@ public class SessionsFragment extends Fragment {
             @Override
             public void onChanged(@Nullable ArrayList<Session> sessions) {
                 if(sessions != null){
-                    for(Session session : sessions){
-                        Log.d(TAG, "onChanged: got session:" + session.getTitle());
-                        adapter.addSession(session);
-                    }
-
+                    sessionsAdapter.setSessions(sessions);
                 }
             }
         });
