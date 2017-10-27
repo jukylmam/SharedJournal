@@ -50,7 +50,7 @@ public class SessionsActivity extends AppCompatActivity implements SessionsFragm
         shareJournalButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Fragment sharingFragment = new JournalSharingFragment();
+                Fragment sharingFragment = JournalSharingFragment.newInstance(journalId);
                 FragmentTransaction shareButtonTransaction = getSupportFragmentManager().beginTransaction();
                 shareButtonTransaction.replace(R.id.fragmentLayout, sharingFragment);
                 shareButtonTransaction.addToBackStack(null);
