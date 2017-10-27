@@ -2,10 +2,15 @@ package rtdsd.groupwork.sharedjournal.nearbyFragment;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import rtdsd.groupwork.sharedjournal.R;
 
@@ -17,7 +22,11 @@ import rtdsd.groupwork.sharedjournal.R;
  * Use the {@link JournalSharingFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class JournalSharingFragment extends Fragment {
+public class JournalSharingFragment extends Fragment implements
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
+
+    private GoogleApiClient mGoogleApiClient;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "JOURNAL_IDENTIFIER";
@@ -73,6 +82,21 @@ public class JournalSharingFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
     }
 
     /**
