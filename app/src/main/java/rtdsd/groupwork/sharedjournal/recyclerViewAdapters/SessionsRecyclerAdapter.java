@@ -118,9 +118,6 @@ public class SessionsRecyclerAdapter extends RecyclerView.Adapter<SessionsRecycl
                     diffBundle.putInt(DIFF_NUMBER_OF_ENTRIES, newSession.getEntryIds().size());
                 }
 
-
-
-
                 if(diffBundle.size() == 0)
                     return null;
                 else
@@ -134,8 +131,8 @@ public class SessionsRecyclerAdapter extends RecyclerView.Adapter<SessionsRecycl
         // we need to create a real copy (instead of shallow clone) of Sessions
         // so that when SessionsLiveData changes its' copies, here we can see the diff and can act
         // accordingly
-        for(Session s : newSessions){
-            sessions.add(new Session(s));
+        for(Session session : newSessions){
+            sessions.add(new Session(session));
         }
         result.dispatchUpdatesTo(this);
     }

@@ -42,6 +42,8 @@ public class SessionsLiveData extends LiveData<ArrayList<Session>> {
                     session.setEntryIds(new HashMap<String, Boolean>());
                 }
 
+                // TODO: 10/27/17 we might need to add here a check if there is the session already - see JournalLiveData
+
                 ArrayList<Session> sessions = getValue();
                 if(sessions == null){
                     sessions = new ArrayList<>();

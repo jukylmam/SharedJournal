@@ -49,10 +49,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChanged(@Nullable ArrayList<RpgJournal> journals) {
                 if(journals != null){
-                    for(RpgJournal journal : journals){
+                    /*for(RpgJournal journal : journals){
                         //journal.getName();
                         adapter.addItem(journal);
-                    }
+                    }*/
+                    adapter.setJournals(journals);
                 }
                 /*if(strings != null){
                     for (RpgJournal journal: strings) {

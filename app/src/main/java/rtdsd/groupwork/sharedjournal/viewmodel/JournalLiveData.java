@@ -16,6 +16,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import rtdsd.groupwork.sharedjournal.model.JournalEntry;
 import rtdsd.groupwork.sharedjournal.model.RpgJournal;
 
 /**
@@ -39,15 +40,15 @@ class JournalLiveData extends LiveData<ArrayList<RpgJournal>> {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 //here we get singular Journal entries, this will be called multiple times, once per each entry
-                RpgJournal journal = dataSnapshot.getValue(RpgJournal.class);
-                Log.d(TAG, "onDataChange: got new journal with id:" + dataSnapshot.getKey()
-                        + "name: " + journal.getName());
-                journal.setId(dataSnapshot.getKey());
+                RpgJournal journal = getJournalFromSnapshot(dataSnapshot);
                 ArrayList<RpgJournal> journals = getValue();
                 if(journals == null) {
                     Log.d(TAG, "error adding entry to journals, getValue() returned null. " +
                             "Creating new 'journals'");
                     journals = new ArrayList<>();
+                }
+                if(journals.contains(journal)){
+                    journals.remove(journal);
                 }
                 journals.add(journal);
                 //set value for this LiveData object - model will know stuff has changed
@@ -57,11 +58,23 @@ class JournalLiveData extends LiveData<ArrayList<RpgJournal>> {
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
+                RpgJournal journal = getJournalFromSnapshot(dataSnapshot);
 
+                ArrayList<RpgJournal> journals = getValue();
+                if(journals != null){
+                    journals.remove(journal);
+                }
+                setValue(journals);
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                RpgJournal journal = getJournalFromSnapshot(dataSnapshot);
+                ArrayList<RpgJournal> journals = getValue();
+                if (journals != null) {
+                    journals.get(journals.indexOf(journal)).updateValues(journal);
+                    setValue(journals);
+                }
 
             }
 
@@ -76,6 +89,17 @@ class JournalLiveData extends LiveData<ArrayList<RpgJournal>> {
             }
         };
         database = FirebaseDatabase.getInstance();
+    }
+
+    private RpgJournal getJournalFromSnapshot(DataSnapshot snapshot){
+        RpgJournal journal = snapshot.getValue(RpgJournal.class);
+        if (journal != null) {
+            Log.d(TAG, "onDataChange: got new journal with id:" + snapshot.getKey()
+                    + "name: " + journal.getName());
+            journal.setId(snapshot.getKey());
+        }
+
+        return journal;
     }
 
     @Override

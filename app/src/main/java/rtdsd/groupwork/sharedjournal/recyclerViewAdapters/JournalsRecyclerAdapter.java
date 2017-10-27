@@ -2,6 +2,9 @@ package rtdsd.groupwork.sharedjournal.recyclerViewAdapters;
 
 
 import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import rtdsd.groupwork.sharedjournal.R;
 import rtdsd.groupwork.sharedjournal.SessionsActivity;
@@ -23,9 +27,70 @@ public class JournalsRecyclerAdapter extends RecyclerView.Adapter<JournalsRecycl
 
     private final String TAG = "JournalsRecyclerAdapter";
     private ArrayList<RpgJournal> journals;
+    private final String DIFF_NAME = "diffName";
 
     public JournalsRecyclerAdapter(ArrayList<RpgJournal> journals){
         this.journals = journals;
+    }
+
+
+    public void setJournals(final ArrayList<RpgJournal> newJournals) {
+
+        DiffUtil.DiffResult result = DiffUtil.calculateDiff(new DiffUtil.Callback() {
+            @Override
+            public int getOldListSize() {
+                return journals.size();
+            }
+
+            @Override
+            public int getNewListSize() {
+                return newJournals.size();
+            }
+
+            @Override
+            public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+
+                return journals.get(oldItemPosition).getId().equals(
+                        newJournals.get(newItemPosition).getId()
+                );
+            }
+
+            @Override
+            public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+                return journals.get(oldItemPosition).getName().equals(
+                        newJournals.get(newItemPosition).getName()
+                );
+                //// TODO: 10/27/17 if we need, add here other content from a journal
+            }
+
+            @Nullable
+            @Override
+            public Object getChangePayload(int oldItemPosition, int newItemPosition) {
+                RpgJournal oldJournal = journals.get(oldItemPosition);
+                RpgJournal newJournal = newJournals.get(newItemPosition);
+                Bundle diffBundle = new Bundle();
+
+                //see if the journal's name has changed
+                if(!oldJournal.getName().equals(newJournal.getName())){
+                    diffBundle.putString(DIFF_NAME, newJournal.getName());
+                }
+
+                //// TODO: 10/27/17 if we need, add here other content from a journal
+
+                if(diffBundle.size() == 0)
+                    return null;
+                else
+                    return diffBundle;
+            }
+        });
+
+        this.journals.clear();
+        //add copies of the journal entries
+        for(RpgJournal journal : newJournals){
+            journals.add(new RpgJournal(journal));
+        }
+        result.dispatchUpdatesTo(this);
+
     }
 
     @Override
@@ -35,6 +100,37 @@ public class JournalsRecyclerAdapter extends RecyclerView.Adapter<JournalsRecycl
         View v = inflater.inflate(R.layout.mainactivity_list_row, parent, false);
 
         return new ViewHolder(v);
+    }
+
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position, List<Object> payloads) {
+
+        final RpgJournal journal = journals.get(position);
+
+        if(!payloads.isEmpty()){
+            Bundle bundle = (Bundle) payloads.get(0);
+
+            for(String key : bundle.keySet()){
+                //sorta silly for loop since there can only be one value for now,
+                //but this might change
+                if(key.equals(DIFF_NAME))
+                    holder.journalNameText.setText(bundle.getString(DIFF_NAME));
+            }
+        }
+        else{
+            holder.journalNameText.setText(journal.getName());
+        }
+
+        holder.rowLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "row with text: " + journal.getName() + " clicked");
+                Intent i = new Intent(view.getContext(), SessionsActivity.class);
+                i.putExtra(SessionsActivity.EXTRA_JOURNAL_ID, journal.getId());
+                view.getContext().startActivity(i);
+
+            }
+        });
     }
 
     @Override
@@ -80,6 +176,8 @@ public class JournalsRecyclerAdapter extends RecyclerView.Adapter<JournalsRecycl
     public void removeItem(RpgJournal journal){
         //todo implement
     }
+
+
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 
