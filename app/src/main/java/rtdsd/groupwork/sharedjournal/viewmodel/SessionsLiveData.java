@@ -10,6 +10,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import rtdsd.groupwork.sharedjournal.model.Session;
 
@@ -32,12 +33,14 @@ public class SessionsLiveData extends LiveData<ArrayList<Session>> {
 
         this.context = context;
 
-
         sessionListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
                 Session session = getSessionFromSnapshot(dataSnapshot);
+                if(session.getEntryIds() == null){
+                    session.setEntryIds(new HashMap<String, Boolean>());
+                }
 
                 ArrayList<Session> sessions = getValue();
                 if(sessions == null){
@@ -48,6 +51,7 @@ public class SessionsLiveData extends LiveData<ArrayList<Session>> {
                     sessions.add(session);
                     setValue(sessions);
                 }
+
                 //if(sessions.size() > 0) {
                     /*for (Session sess : sessions) {
                         //only use setData when we get an unknown session so observer called when needed
@@ -76,6 +80,9 @@ public class SessionsLiveData extends LiveData<ArrayList<Session>> {
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 Session changedSession = getSessionFromSnapshot(dataSnapshot);
+                if(changedSession.getEntryIds() == null){
+                    changedSession.setEntryIds(new HashMap<String, Boolean>());
+                }
 
                 ArrayList<Session> sessions = getValue();
 
