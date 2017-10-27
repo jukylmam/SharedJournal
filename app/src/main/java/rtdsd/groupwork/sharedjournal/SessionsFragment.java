@@ -1,12 +1,25 @@
 package rtdsd.groupwork.sharedjournal;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.util.ArrayList;
+
+import rtdsd.groupwork.sharedjournal.model.Session;
+import rtdsd.groupwork.sharedjournal.recyclerViewAdapters.SessionsRecyclerAdapter;
+import rtdsd.groupwork.sharedjournal.viewmodel.SessionsViewModel;
 
 
 /**
@@ -23,6 +36,8 @@ public class SessionsFragment extends Fragment {
     private static final String JOURNAL_ID_PARAM = "param1";
     private static final String ARG_PARAM2 = "param2";
 
+    private final String TAG = "SessionsFragment";
+
     // TODO: Rename and change types of parameters
     private String journalId;
     private String mParam2;
@@ -37,7 +52,7 @@ public class SessionsFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
+     * @param journalId Parameter 1.
      * @param param2 Parameter 2.
      * @return A new instance of fragment SessionsFragment.
      */
@@ -64,7 +79,31 @@ public class SessionsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_sessions, container, false);
+        View v = inflater.inflate(R.layout.fragment_sessions, container, false);
+
+        RecyclerView recyclerView = v.findViewById(R.id.sessionsList);
+        final SessionsRecyclerAdapter sessionsAdapter = new SessionsRecyclerAdapter();
+        recyclerView.setAdapter(sessionsAdapter);
+        LinearLayoutManager manager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(manager);
+
+        /*Session s = new Session();
+        s.setTitle("test session title");
+        s.setStartedOn("25_6_2016");
+        s.setEndedOn("27_6_2016");
+        adapter.addSession(s);*/
+
+        SessionsViewModel model = ViewModelProviders.of(this).get(SessionsViewModel.class);
+        model.getData().observe(this, new Observer<ArrayList<Session>>() {
+            @Override
+            public void onChanged(@Nullable ArrayList<Session> sessions) {
+                if(sessions != null){
+                    sessionsAdapter.setSessions(sessions);
+                }
+            }
+        });
+
+        return v;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

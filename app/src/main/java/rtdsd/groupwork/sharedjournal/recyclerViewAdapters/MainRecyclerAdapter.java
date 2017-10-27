@@ -1,4 +1,4 @@
-package rtdsd.groupwork.sharedjournal;
+package rtdsd.groupwork.sharedjournal.recyclerViewAdapters;
 
 
 import android.content.Intent;
@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import rtdsd.groupwork.sharedjournal.R;
+import rtdsd.groupwork.sharedjournal.SessionsActivity;
 import rtdsd.groupwork.sharedjournal.model.RpgJournal;
 
 /**
@@ -21,7 +23,6 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
 
     private final String TAG = "MainRecyclerAdapter";
     private ArrayList<RpgJournal> journals;
-
 
     public MainRecyclerAdapter(ArrayList<RpgJournal> journals){
         this.journals = journals;

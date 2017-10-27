@@ -17,7 +17,7 @@ import rtdsd.groupwork.sharedjournal.nearbyFragment.JournalSharingFragment;
 public class SessionsActivity extends AppCompatActivity implements SessionsFragment.OnFragmentInteractionListener{
 
     private final String TAG = "SessionsActivity";
-    static final String EXTRA_JOURNAL_ID = "journalId";
+    public static final String EXTRA_JOURNAL_ID = "journalId";
 
     private static final String SESSIONS_FRAGMENT_TAG = "sessionsFragment";
 

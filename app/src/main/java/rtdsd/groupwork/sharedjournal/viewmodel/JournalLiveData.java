@@ -1,4 +1,4 @@
-package rtdsd.groupwork.sharedjournal;
+package rtdsd.groupwork.sharedjournal.viewmodel;
 
 import android.arch.lifecycle.LiveData;
 import android.content.Context;

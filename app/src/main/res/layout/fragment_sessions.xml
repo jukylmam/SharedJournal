@@ -4,10 +4,14 @@
     android:layout_height="match_parent"
     tools:context="rtdsd.groupwork.sharedjournal.SessionsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/sessionsList"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:paddingTop="10dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"/>
 
 </FrameLayout>
