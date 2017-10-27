@@ -19,12 +19,12 @@ import rtdsd.groupwork.sharedjournal.model.RpgJournal;
  * Created by OMISTAJA on 17.10.2017.
  */
 
-public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapter.ViewHolder> {
+public class JournalsRecyclerAdapter extends RecyclerView.Adapter<JournalsRecyclerAdapter.ViewHolder> {
 
-    private final String TAG = "MainRecyclerAdapter";
+    private final String TAG = "JournalsRecyclerAdapter";
     private ArrayList<RpgJournal> journals;
 
-    public MainRecyclerAdapter(ArrayList<RpgJournal> journals){
+    public JournalsRecyclerAdapter(ArrayList<RpgJournal> journals){
         this.journals = journals;
     }
 

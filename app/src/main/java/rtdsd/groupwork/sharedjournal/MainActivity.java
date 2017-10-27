@@ -14,7 +14,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import rtdsd.groupwork.sharedjournal.model.RpgJournal;
-import rtdsd.groupwork.sharedjournal.recyclerViewAdapters.MainRecyclerAdapter;
+import rtdsd.groupwork.sharedjournal.recyclerViewAdapters.JournalsRecyclerAdapter;
 import rtdsd.groupwork.sharedjournal.viewmodel.JournalViewModel;
 
 public class MainActivity extends AppCompatActivity {
@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
 
         recyclerView = findViewById(R.id.mainactivity_recyclerview);
-        final MainRecyclerAdapter adapter = new MainRecyclerAdapter(new ArrayList<RpgJournal>());
+        final JournalsRecyclerAdapter adapter = new JournalsRecyclerAdapter(new ArrayList<RpgJournal>());
         recyclerView.setAdapter(adapter);
         LinearLayoutManager manager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(manager);
