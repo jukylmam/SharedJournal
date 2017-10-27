@@ -1,5 +1,6 @@
 package rtdsd.groupwork.sharedjournal.recyclerViewAdapters;
 
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import rtdsd.groupwork.sharedjournal.R;
 import rtdsd.groupwork.sharedjournal.model.Session;
@@ -23,6 +25,9 @@ public class SessionsRecyclerAdapter extends RecyclerView.Adapter<SessionsRecycl
 
     private ArrayList<Session> sessions;
     private final String TAG = "SessionsRecyclerAdapter";
+    private final String DIFF_TITLE = "titleDiff";
+    private final String DIFF_START = "startDiff";
+    private final String DIFF_END = "endDiff";
 
     public SessionsRecyclerAdapter(){
         sessions = new ArrayList<>();
@@ -48,6 +53,9 @@ public class SessionsRecyclerAdapter extends RecyclerView.Adapter<SessionsRecycl
 
         Log.d(TAG, "setSessions: newSessions size: " + newSessions.size());
         Log.d(TAG, "setSessions: sessions size:" + sessions.size());
+        for(Session s : sessions){
+            Log.d(TAG, "setSessions: session title: " + s.getTitle());
+        }
 
         //call diffUtil to figure out differences between new list and current list
         DiffUtil.DiffResult result = DiffUtil.calculateDiff(new DiffUtil.Callback() {
@@ -66,63 +74,47 @@ public class SessionsRecyclerAdapter extends RecyclerView.Adapter<SessionsRecycl
                 String oldSessionId = sessions.get(oldItemPosition).getId();
                 String newSessionId = newSessions.get(newItemPosition).getId();
                 return oldSessionId.equals(newSessionId);
-
-                //return sessions.get(oldItemPosition).getId().equals(
-                //        newSessions.get(newItemPosition).getId());
             }
 
             @Override
             public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
                 Session oldItem = sessions.get(oldItemPosition);
                 Session newItem = newSessions.get(newItemPosition);
+                Log.d(TAG, "areContentsTheSame: old session title: " + oldItem.getTitle() +
+                        " new session title: " + newItem.getTitle());
                 return oldItem.areContentsSame(newItem);
             }
 
             @Nullable
             @Override
             public Object getChangePayload(int oldItemPosition, int newItemPosition) {
-                return super.getChangePayload(oldItemPosition, newItemPosition);
+                Log.d(TAG, "getChangePayload: called");
+                Session oldSession = sessions.get(oldItemPosition);
+                Session newSession = newSessions.get(newItemPosition);
+                Bundle diffBundle = new Bundle();
+                //see what has changed
+                if(!oldSession.getTitle().equals(newSession.getTitle())){
+                    diffBundle.putString(DIFF_TITLE, newSession.getTitle());
+                }
+                // TODO: 10/23/17 add here other fields, startedOn and endedOn
+
+                if(diffBundle.size() == 0)
+                    return null;
+                else
+                    return diffBundle;
             }
         });
 
         //just add all elements, dispatchUpdates will take care of notifying adapter of changes
         this.sessions.clear();
-        this.sessions.addAll(newSessions);
-        result.dispatchUpdatesTo(this);
 
-        //first add the lists that are missing
-        /*for(Session session : newSessions){
-            if(!sessions.contains(session)){
-                sessions.add(session);
-                notifyItemInserted(sessions.size()-1);
-            }
+        // we need to create a real copy (instead of shallow clone) of Sessions
+        // so that when SessionsLiveData changes its' copies, here we can see the diff and can act
+        // accordingly
+        for(Session s : newSessions){
+            sessions.add(new Session(s));
         }
-
-        //then remove the sessions that are not in the newSessions list
-        for(Session session : sessions){
-            if(!newSessions.contains(session)){
-                int removableItemIndex = sessions.indexOf(session);
-                sessions.remove(session);
-                notifyItemRemoved(removableItemIndex);
-            }
-        }*/
-
-        //an element was updated, whole list needs to be re-drawn (we dont get any indication from
-        //liveData which element has changed)
-
-        //if adding elements
-        /*Collection<Session> sourceList = sessions;
-        newSessions.removeAll(sourceList);
-        Log.d(TAG, "elements left in the newSessions: " + newSessions.size());
-        sessions.addAll(newSessions);
-
-        //if removing elements...
-        //get the diff between lists
-        sourceList.removeAll(newSessions);
-        //remove the diff from adapter's list
-        sessions.removeAll(sourceList);*/
-
-
+        result.dispatchUpdatesTo(this);
     }
 
     @Override
@@ -143,6 +135,37 @@ public class SessionsRecyclerAdapter extends RecyclerView.Adapter<SessionsRecycl
                 Log.d(TAG, "onClick: row clicked: " + session.getTitle());
             }
         });
+    }
+
+    @Override
+        public void onBindViewHolder(ViewHolder holder, int position, List<Object> payloads) {
+        Log.d(TAG, "onBindViewHolder: called with position " + position);
+            //called when a Session has changed and this is noticed (in setSession, in diffUtils)
+        if(!payloads.isEmpty()) {
+            Log.d(TAG, "onBindViewHolder: payloads not empty");
+            final Session session = sessions.get(position);
+
+            Bundle bundle = (Bundle) payloads.get(0);
+            for(String key : bundle.keySet()){
+                if(key.equals(DIFF_TITLE)){
+                    Log.d(TAG, "onBindViewHolder setting title: " + bundle.getString(key));
+                    holder.sessionNameText.setText(bundle.getString(key));
+                }
+                // TODO: 10/23/17 add here other fields: startedOn and endedOn
+            }
+        }
+        else{
+            final Session session = sessions.get(position);
+            holder.sessionNameText.setText(session.getTitle());
+            holder.row.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Log.d(TAG, "onClick: row clicked: " + session.getTitle());
+                }
+            });
+        }
+
+
     }
 
     @Override

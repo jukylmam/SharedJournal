@@ -1,5 +1,7 @@
 package rtdsd.groupwork.sharedjournal.model;
 
+import android.util.Log;
+
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -9,9 +11,19 @@ import java.util.Objects;
 
 public class Session {
 
-    String id, title, startedOn, endedOn;
-    HashMap<String, Boolean> listEntries;
+    private String id, title, startedOn, endedOn;
+    private HashMap<String, Boolean> listEntries;
 
+    public Session (Session s){
+        this.id = s.id;
+        this.title = s.title;
+        this.startedOn = s.startedOn;
+        this.endedOn = s.endedOn;
+    }
+
+    public Session(){
+        //empty constructor, as needed by Firebase
+    }
 
     public String getId() {
         return id;
@@ -61,10 +73,13 @@ public class Session {
     }
 
     public void updateValues(Session s){
-        this.title = s.title;
-        this.startedOn = s.startedOn;
-        this.endedOn = s.endedOn;
+        Log.d("Session.java", "updateValues: title: " + s.getTitle()
+                + " startedon: " + s.startedOn + " endedon: " + s.endedOn);
+        title = s.title;
+        startedOn = s.startedOn;
+        endedOn = s.endedOn;
     }
+
 
     @Override
     public int hashCode() {
