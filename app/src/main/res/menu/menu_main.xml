@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/scan_journals"
+        android:icon="@drawable/ic_airplanemode_active_white_24dp"
+        android:title="@string/main_menu_scan_journals"
+        app:showAsAction="always"/>
+
+</menu>

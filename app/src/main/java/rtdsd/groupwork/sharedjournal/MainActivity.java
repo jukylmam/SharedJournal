@@ -8,6 +8,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -28,7 +31,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
     }
 
     @Override
@@ -63,6 +65,25 @@ public class MainActivity extends AppCompatActivity {
                 }*/
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if(item.getItemId() == R.id.scan_journals){
+            Log.d(TAG, "onOptionsItemSelected: should open scan journals stuff now");
+            // TODO: 11/2/17 add open scan stuff here Niko
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     class fabOnClickListener implements View.OnClickListener{

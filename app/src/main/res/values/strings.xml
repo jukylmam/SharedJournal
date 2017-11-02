@@ -8,4 +8,7 @@
     <string name="number_of_entries_Text">Number of Entries:</string>
     <string name="started_on_date">Started on</string>
     <string name="ended_on_date">Ended on</string>
+
+    <!-- strings for main activity -->
+    <string name="main_menu_scan_journals">Scan for nearby journals</string>
 </resources>
