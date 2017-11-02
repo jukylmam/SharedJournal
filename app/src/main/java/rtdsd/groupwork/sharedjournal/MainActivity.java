@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,14 +19,20 @@ import java.util.ArrayList;
 
 import rtdsd.groupwork.sharedjournal.model.RpgJournal;
 import rtdsd.groupwork.sharedjournal.recyclerViewAdapters.JournalsRecyclerAdapter;
+import rtdsd.groupwork.sharedjournal.viewmodel.FireBaseJournalCommunication;
 import rtdsd.groupwork.sharedjournal.viewmodel.JournalViewModel;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements AddJournalFragment.OnFragmentInteraction{
 
     private final String TAG = "MainActivity";
     private TextView textView;
     private RecyclerView recyclerView;
     private FloatingActionButton fab;
+
+    private final String ADD_JOURNAL_FRAGMENT_TAG = "addJournalFragment";
+
+    FireBaseJournalCommunication firebaseJournalReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        firebaseJournalReference = new FireBaseJournalCommunication();
 
         recyclerView = findViewById(R.id.mainactivity_recyclerview);
         final JournalsRecyclerAdapter adapter = new JournalsRecyclerAdapter(new ArrayList<RpgJournal>());
@@ -86,10 +94,19 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    class fabOnClickListener implements View.OnClickListener{
+    private class fabOnClickListener implements View.OnClickListener{
         @Override
         public void onClick(View view) {
-            //// TODO: 18.10.2017 juhana add here the stuff needed to show a popup thing for user
+            DialogFragment addJournalFragment = new AddJournalFragment();
+            addJournalFragment.show(getSupportFragmentManager(), ADD_JOURNAL_FRAGMENT_TAG);
+
         }
+    }
+
+    //called when OK is clicked in the set journal name fragment
+    @Override
+    public void onOkButtonClicked(String journalName) {
+        Log.d(TAG, "onOkButtonClicked: mainactivity got journal name:" + journalName);
+        firebaseJournalReference.addJournal(journalName);
     }
 }
