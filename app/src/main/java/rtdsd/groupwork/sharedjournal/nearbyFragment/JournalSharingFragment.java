@@ -9,6 +9,7 @@ import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -34,6 +35,8 @@ public class JournalSharingFragment extends Fragment implements
     private String journalId;
 
     private SwitchCompat sharingSwitch;
+    private TextView journalNameField;
+
     private OnFragmentInteractionListener mListener;
 
     /**
@@ -59,13 +62,17 @@ public class JournalSharingFragment extends Fragment implements
             journalId = getArguments().getString(ARG_PARAM1);
         }
 
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
+
+        sharingSwitch = getView().findViewById(R.id.journal_sharing_switch);
+        journalNameField = getView().findViewById(R.id.journal_sharing_journal_id);
+
+        
         return inflater.inflate(R.layout.fragment_journal_sharing, container, false);
     }
 

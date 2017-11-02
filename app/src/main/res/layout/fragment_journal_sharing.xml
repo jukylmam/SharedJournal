@@ -6,9 +6,15 @@
     tools:context="rtdsd.groupwork.sharedjournal.nearbyFragment.JournalSharingFragment">
 
     <TextView
+        android:id="@+id/journal_sharing_fragment_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/journal_sharing_fragment" />
+
+    <TextView
+        android:id="@+id/journal_sharing_journal_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <android.support.v7.widget.SwitchCompat
         android:id="@+id/journal_sharing_switch"
