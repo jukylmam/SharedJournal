@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,17 +28,13 @@ public class JournalSharingFragment extends Fragment implements
         GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleApiClient mGoogleApiClient;
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+
     private static final String ARG_PARAM1 = "JOURNAL_IDENTIFIER";
 
     private String journalId;
 
+    private SwitchCompat sharingSwitch;
     private OnFragmentInteractionListener mListener;
-
-    public JournalSharingFragment() {
-        // Required empty public constructor
-    }
 
     /**
      * Use this factory method to create a new instance of
@@ -61,6 +58,8 @@ public class JournalSharingFragment extends Fragment implements
         if (getArguments() != null) {
             journalId = getArguments().getString(ARG_PARAM1);
         }
+
+
     }
 
     @Override
