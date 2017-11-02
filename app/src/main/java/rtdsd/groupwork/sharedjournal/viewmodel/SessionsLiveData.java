@@ -29,9 +29,13 @@ public class SessionsLiveData extends LiveData<ArrayList<Session>> {
 
     private final String DB_SESSIONS_KEY = "sessions";
 
-    public SessionsLiveData(Context context){
+    private final String journalId;
+
+
+    public SessionsLiveData(Context context, String journalId){
 
         this.context = context;
+        this.journalId = journalId;
 
         sessionListener = new ChildEventListener() {
             @Override
@@ -135,12 +139,16 @@ public class SessionsLiveData extends LiveData<ArrayList<Session>> {
 
     @Override
     protected void onActive() {
-        database.getReference(DB_SESSIONS_KEY).addChildEventListener(sessionListener);
+        database.getReference(DB_SESSIONS_KEY)
+                .child(journalId)
+                .addChildEventListener(sessionListener);
     }
 
     @Override
     protected void onInactive() {
-        database.getReference(DB_SESSIONS_KEY).removeEventListener(sessionListener);
+        database.getReference(DB_SESSIONS_KEY)
+                .child(journalId)
+                .removeEventListener(sessionListener);
     }
 
 

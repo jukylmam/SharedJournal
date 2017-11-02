@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import rtdsd.groupwork.sharedjournal.model.Session;
 import rtdsd.groupwork.sharedjournal.recyclerViewAdapters.SessionsRecyclerAdapter;
 import rtdsd.groupwork.sharedjournal.viewmodel.SessionsViewModel;
+import rtdsd.groupwork.sharedjournal.viewmodel.SessionsViewModelFactory;
 
 
 /**
@@ -81,19 +82,18 @@ public class SessionsFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_sessions, container, false);
 
+
         RecyclerView recyclerView = v.findViewById(R.id.sessionsList);
         final SessionsRecyclerAdapter sessionsAdapter = new SessionsRecyclerAdapter();
         recyclerView.setAdapter(sessionsAdapter);
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(manager);
 
-        /*Session s = new Session();
-        s.setTitle("test session title");
-        s.setStartedOn("25_6_2016");
-        s.setEndedOn("27_6_2016");
-        adapter.addSession(s);*/
-
-        SessionsViewModel model = ViewModelProviders.of(this).get(SessionsViewModel.class);
+        //observer the livedata (firebase data)
+        SessionsViewModel model = ViewModelProviders.of(this, new SessionsViewModelFactory(
+                this.getActivity().getApplication(), journalId))
+                .get(SessionsViewModel.class);
+        //SessionsViewModel model = ViewModelProviders.of(this).get(SessionsViewModel.class);
         model.getData().observe(this, new Observer<ArrayList<Session>>() {
             @Override
             public void onChanged(@Nullable ArrayList<Session> sessions) {
