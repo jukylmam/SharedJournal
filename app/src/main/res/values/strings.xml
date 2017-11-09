@@ -11,6 +11,10 @@
 
     <!-- strings for main activity -->
     <string name="main_menu_scan_journals">Scan for nearby journals</string>
+    <string name="add_journal_dialog_title">Add a new journal</string>
     <string name="add_journal_edittext_hint">Journal name</string>
-    <string name="add_journal_title">Add a new journal</string>
+
+    <!-- strings for sessions activity -->
+    <string name="add_session_dialog_title">Add new session</string>
+    <string name="add_session_edittext_hint">Session name</string>
 </resources>

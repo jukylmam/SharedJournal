@@ -17,13 +17,15 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import rtdsd.groupwork.sharedjournal.DialogFragments.AddElementDialogFragment;
+import rtdsd.groupwork.sharedjournal.DialogFragments.BaseAppDialogFragment;
 import rtdsd.groupwork.sharedjournal.model.RpgJournal;
 import rtdsd.groupwork.sharedjournal.recyclerViewAdapters.JournalsRecyclerAdapter;
 import rtdsd.groupwork.sharedjournal.viewmodel.FireBaseJournalCommunication;
 import rtdsd.groupwork.sharedjournal.viewmodel.JournalViewModel;
 
 public class MainActivity extends AppCompatActivity
-        implements AddJournalFragment.OnFragmentInteraction{
+        implements BaseAppDialogFragment.OnDialogFragmentInteraction {
 
     private final String TAG = "MainActivity";
     private TextView textView;
@@ -97,16 +99,23 @@ public class MainActivity extends AppCompatActivity
     private class fabOnClickListener implements View.OnClickListener{
         @Override
         public void onClick(View view) {
-            DialogFragment addJournalFragment = new AddJournalFragment();
-            addJournalFragment.show(getSupportFragmentManager(), ADD_JOURNAL_FRAGMENT_TAG);
+            //create args for the dialog fragment texts
+            Bundle args = new Bundle();
+            args.putString(BaseAppDialogFragment.DIALOG_TITLE_ARG,
+                    getString(R.string.add_journal_dialog_title));
+            args.putString(BaseAppDialogFragment.DIALOG_EDITTEXT_HINT_ARG,
+                    getString(R.string.add_journal_edittext_hint));
 
+            DialogFragment addJournalFragment = new AddElementDialogFragment();
+            addJournalFragment.setArguments(args);
+            addJournalFragment.show(getSupportFragmentManager(), ADD_JOURNAL_FRAGMENT_TAG);
         }
     }
 
     //called when OK is clicked in the set journal name fragment
     @Override
-    public void onOkButtonClicked(String journalName) {
-        Log.d(TAG, "onOkButtonClicked: mainactivity got journal name:" + journalName);
-        firebaseJournalReference.addJournal(journalName);
+    public void onDialogOkButtonClicked(String editTextContents) {
+        Log.d(TAG, "onDialogOkButtonClicked: mainactivity got journal name:" + editTextContents);
+        firebaseJournalReference.addJournal(editTextContents);
     }
 }

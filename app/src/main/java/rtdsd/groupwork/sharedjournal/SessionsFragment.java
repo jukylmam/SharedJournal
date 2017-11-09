@@ -45,6 +45,8 @@ public class SessionsFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+    SessionsViewModel model;
+
     public SessionsFragment() {
         // Required empty public constructor
     }
@@ -90,7 +92,7 @@ public class SessionsFragment extends Fragment {
         recyclerView.setLayoutManager(manager);
 
         //observer the livedata (firebase data)
-        SessionsViewModel model = ViewModelProviders.of(this, new SessionsViewModelFactory(
+        model = ViewModelProviders.of(this, new SessionsViewModelFactory(
                 this.getActivity().getApplication(), journalId))
                 .get(SessionsViewModel.class);
         //SessionsViewModel model = ViewModelProviders.of(this).get(SessionsViewModel.class);
@@ -120,7 +122,7 @@ public class SessionsFragment extends Fragment {
             mListener = (OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteraction");
+                    + " must implement OnDialogFragmentInteraction");
         }
     }
 
@@ -128,6 +130,10 @@ public class SessionsFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    public void userAddingSession(String name){
+        Log.d(TAG, "userAddingSession: in fragment, got session name" + name);
     }
 
     /**
