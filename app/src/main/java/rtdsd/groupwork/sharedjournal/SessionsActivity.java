@@ -1,23 +1,20 @@
 package rtdsd.groupwork.sharedjournal;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import rtdsd.groupwork.sharedjournal.nearbyFragment.JournalSharingFragment;
-
 import rtdsd.groupwork.sharedjournal.DialogFragments.AddElementDialogFragment;
 import rtdsd.groupwork.sharedjournal.DialogFragments.BaseAppDialogFragment;
 import rtdsd.groupwork.sharedjournal.model.Session;
+import rtdsd.groupwork.sharedjournal.nearbyFragment.JournalSharingFragment;
 
 public class SessionsActivity extends BaseActivity implements
         SessionsFragment.OnFragmentInteractionListener,
