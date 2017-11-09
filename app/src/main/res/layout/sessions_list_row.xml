@@ -13,11 +13,26 @@
         android:textSize="22sp"/>
 
     <TextView
+        android:id="@+id/number_of_entries_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/session_name"
+        android:text="@string/number_of_entries_Text"
+        android:layout_marginEnd="5dp" />
+
+    <TextView
+        android:id="@+id/session_entries_amount"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_below="@+id/session_name"
+        android:layout_toEndOf="@+id/number_of_entries_info"/>
+
+    <TextView
         android:id="@+id/started_infotext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/started_on_date"
-        android:layout_below="@+id/session_name"
+        android:layout_below="@+id/number_of_entries_info"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="5dp"/>
 
@@ -25,7 +40,7 @@
         android:id="@+id/session_startedon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/session_name"
+        android:layout_below="@+id/number_of_entries_info"
         android:layout_toEndOf="@id/started_infotext" />
 
     <TextView
@@ -43,29 +58,5 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/session_startedon"
         android:layout_toEndOf="@+id/endedon_infotext"/>
-
-
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignBottom="@+id/session_name"
-        android:layout_marginEnd="10dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/number_of_entries_Text"
-            android:layout_marginEnd="5dp"/>
-
-        <TextView
-            android:id="@+id/session_entries_amount"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content" />
-
-    </LinearLayout>
-
-
 
 </RelativeLayout>
