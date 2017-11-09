@@ -1,18 +1,33 @@
 package rtdsd.groupwork.sharedjournal;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridLayout;
+
+import java.util.ArrayList;
+
+import rtdsd.groupwork.sharedjournal.model.Entry;
+import rtdsd.groupwork.sharedjournal.model.Session;
+import rtdsd.groupwork.sharedjournal.recyclerViewAdapters.EntriesRecyclerAdapter;
+import rtdsd.groupwork.sharedjournal.viewmodel.EntriesViewModel;
+import rtdsd.groupwork.sharedjournal.viewmodel.EntriesViewModelFactory;
+import rtdsd.groupwork.sharedjournal.viewmodel.SessionsViewModel;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link EntriesFragment.OnFragmentInteractionListener} interface
+ * {@link OnEntriesFragmentInteractionListener} interface
  * to handle interaction events.
  * Use the {@link EntriesFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -27,7 +42,7 @@ public class EntriesFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private OnFragmentInteractionListener mListener;
+    private OnEntriesFragmentInteractionListener mListener;
 
     public EntriesFragment() {
         // Required empty public constructor
@@ -64,6 +79,30 @@ public class EntriesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
+        View v = inflater.inflate(R.layout.fragment_entries, container, false);
+
+        RecyclerView recyclerView = v.findViewById(R.id.entries_recyclerview);
+        EntriesRecyclerAdapter adapter = new EntriesRecyclerAdapter();
+        recyclerView.setAdapter(adapter);
+
+        GridLayoutManager manager = new GridLayoutManager(getContext(), 2);
+        recyclerView.setLayoutManager(manager);
+
+        //observe the data
+        EntriesViewModel model = ViewModelProviders.of(this, new EntriesViewModelFactory(
+                this.getActivity().getApplication(), "entry_id_here"))
+                .get(EntriesViewModel.class);
+
+        model.getData().observe(this, new Observer<ArrayList<Entry>>() {
+            @Override
+            public void onChanged(@Nullable ArrayList<Entry> entries) {
+                if(entries != null){
+                    // TODO: 11/9/17 do stuff here I guess, inform adapter
+                }
+            }
+        });
+
         return inflater.inflate(R.layout.fragment_entries, container, false);
     }
 
@@ -77,11 +116,11 @@ public class EntriesFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof OnEntriesFragmentInteractionListener) {
+            mListener = (OnEntriesFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnSessionsFragmentInteractionListener");
         }
     }
 
@@ -101,7 +140,7 @@ public class EntriesFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
+    public interface OnEntriesFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }

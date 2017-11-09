@@ -150,6 +150,4 @@ public class SessionsLiveData extends LiveData<ArrayList<Session>> {
                 .child(journalId)
                 .removeEventListener(sessionListener);
     }
-
-
 }

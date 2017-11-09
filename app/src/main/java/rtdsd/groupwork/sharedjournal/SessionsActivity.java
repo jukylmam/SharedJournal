@@ -6,7 +6,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -16,14 +15,17 @@ import rtdsd.groupwork.sharedjournal.DialogFragments.BaseAppDialogFragment;
 import rtdsd.groupwork.sharedjournal.model.Session;
 
 public class SessionsActivity extends BaseActivity implements
-        SessionsFragment.OnFragmentInteractionListener,
+        SessionsFragment.OnSessionsFragmentInteractionListener,
+        EntriesFragment.OnEntriesFragmentInteractionListener,
         BaseAppDialogFragment.OnDialogFragmentInteraction {
 
     private final String TAG = "SessionsActivity";
     public static final String EXTRA_JOURNAL_ID = "journalId";
 
     private static final String SESSIONS_FRAGMENT_TAG = "sessionsFragment";
+    private static final String ENTRIES_FRAGMENT_TAG = "entriesFragment";
     private static final String ADD_SESSION_FRAGMENT_TAG = "addSessionFragmentTag";
+
 
     private String journalId;
 
@@ -50,8 +52,20 @@ public class SessionsActivity extends BaseActivity implements
 
     @Override
     public void openSession(Session session) {
-        //// TODO: 18.10.2017 implement
         Log.d(TAG, "openSession: opening a new session: " + session.toString());
+
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+
+        EntriesFragment entriesFragment = EntriesFragment.newInstance("", "");
+
+        transaction.replace(R.id.fragmentLayout, entriesFragment, ENTRIES_FRAGMENT_TAG);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
 
     }
 
