@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rtdsd.groupwork.sharedjournal.R;
+import rtdsd.groupwork.sharedjournal.SessionsFragment;
 import rtdsd.groupwork.sharedjournal.model.Session;
 
 /**
@@ -29,12 +30,14 @@ public class SessionsRecyclerAdapter extends RecyclerView.Adapter<SessionsRecycl
     private final String DIFF_END = "endDiff";
     private final String DIFF_NUMBER_OF_ENTRIES = "entriesDiff";
 
-    public SessionsRecyclerAdapter(){
+    private final SessionsFragment hostFragment;
+
+    public SessionsRecyclerAdapter(SessionsFragment hostFragment){
         sessions = new ArrayList<>();
+        this.hostFragment = hostFragment;
     }
 
     public void addSession(Session session){
-
         sessions.add(session);
         notifyItemInserted(sessions.size()-1);
     }
@@ -158,7 +161,7 @@ public class SessionsRecyclerAdapter extends RecyclerView.Adapter<SessionsRecycl
     }
 
     @Override
-        public void onBindViewHolder(ViewHolder holder, int position, List<Object> payloads) {
+        public void onBindViewHolder(ViewHolder holder, final int position, List<Object> payloads) {
         Log.d(TAG, "onBindViewHolder: called with position " + position);
             //called when a Session has changed and this is noticed (in setSession, in diffUtils)
         if(!payloads.isEmpty()) {
@@ -200,14 +203,11 @@ public class SessionsRecyclerAdapter extends RecyclerView.Adapter<SessionsRecycl
             holder.row.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Log.d(TAG, "onClick: row clicked: " + session.getTitle());
+                    //Log.d(TAG, "onClick: row clicked: " + session.getTitle());
+                    hostFragment.onSessionClicked(sessions.get(position));
                 }
             });
-
-
         }
-
-
     }
 
     @Override

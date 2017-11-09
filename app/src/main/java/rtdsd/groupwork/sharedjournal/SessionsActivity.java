@@ -13,6 +13,7 @@ import android.view.View;
 
 import rtdsd.groupwork.sharedjournal.DialogFragments.AddElementDialogFragment;
 import rtdsd.groupwork.sharedjournal.DialogFragments.BaseAppDialogFragment;
+import rtdsd.groupwork.sharedjournal.model.Session;
 
 public class SessionsActivity extends BaseActivity implements
         SessionsFragment.OnFragmentInteractionListener,
@@ -48,8 +49,10 @@ public class SessionsActivity extends BaseActivity implements
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
+    public void openSession(Session session) {
         //// TODO: 18.10.2017 implement
+        Log.d(TAG, "openSession: opening a new session: " + session.toString());
+
     }
 
     @Override

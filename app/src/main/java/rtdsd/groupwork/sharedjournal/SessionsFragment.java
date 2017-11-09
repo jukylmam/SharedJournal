@@ -1,10 +1,8 @@
 package rtdsd.groupwork.sharedjournal;
 
 import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -19,7 +17,6 @@ import java.util.ArrayList;
 
 import rtdsd.groupwork.sharedjournal.model.Session;
 import rtdsd.groupwork.sharedjournal.recyclerViewAdapters.SessionsRecyclerAdapter;
-import rtdsd.groupwork.sharedjournal.viewmodel.FireBaseJournalCommunication;
 import rtdsd.groupwork.sharedjournal.viewmodel.FireBaseSessionCommunication;
 import rtdsd.groupwork.sharedjournal.viewmodel.SessionsViewModel;
 import rtdsd.groupwork.sharedjournal.viewmodel.SessionsViewModelFactory;
@@ -88,9 +85,10 @@ public class SessionsFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_sessions, container, false);
 
-
         RecyclerView recyclerView = v.findViewById(R.id.sessionsList);
-        final SessionsRecyclerAdapter sessionsAdapter = new SessionsRecyclerAdapter();
+
+        //pass self as argument so adapter can call methods
+        final SessionsRecyclerAdapter sessionsAdapter = new SessionsRecyclerAdapter(this);
         recyclerView.setAdapter(sessionsAdapter);
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(manager);
@@ -113,9 +111,9 @@ public class SessionsFragment extends Fragment {
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
+    public void onSessionClicked(Session session) {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mListener.openSession(session);
         }
     }
 
@@ -152,7 +150,6 @@ public class SessionsFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void openSession(Session session);
     }
 }
