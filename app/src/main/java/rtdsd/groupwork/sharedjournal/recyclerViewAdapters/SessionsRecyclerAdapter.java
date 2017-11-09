@@ -11,10 +11,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import rtdsd.groupwork.sharedjournal.R;
+import rtdsd.groupwork.sharedjournal.SessionsFragment;
 import rtdsd.groupwork.sharedjournal.model.Session;
 
 /**
@@ -28,13 +28,16 @@ public class SessionsRecyclerAdapter extends RecyclerView.Adapter<SessionsRecycl
     private final String DIFF_TITLE = "titleDiff";
     private final String DIFF_START = "startDiff";
     private final String DIFF_END = "endDiff";
+    private final String DIFF_NUMBER_OF_ENTRIES = "entriesDiff";
 
-    public SessionsRecyclerAdapter(){
+    private final SessionsFragment hostFragment;
+
+    public SessionsRecyclerAdapter(SessionsFragment hostFragment){
         sessions = new ArrayList<>();
+        this.hostFragment = hostFragment;
     }
 
     public void addSession(Session session){
-
         sessions.add(session);
         notifyItemInserted(sessions.size()-1);
     }
@@ -92,11 +95,31 @@ public class SessionsRecyclerAdapter extends RecyclerView.Adapter<SessionsRecycl
                 Session oldSession = sessions.get(oldItemPosition);
                 Session newSession = newSessions.get(newItemPosition);
                 Bundle diffBundle = new Bundle();
-                //see what has changed
+
+                //see what has changed in the session
                 if(!oldSession.getTitle().equals(newSession.getTitle())){
                     diffBundle.putString(DIFF_TITLE, newSession.getTitle());
                 }
-                // TODO: 10/23/17 add here other fields, startedOn and endedOn
+
+                if(!oldSession.getStartedOn().equals(newSession.getStartedOn())){
+                    diffBundle.putString(DIFF_START, newSession.getStartedOn());
+                }
+                if(!oldSession.getEndedOn().equals(newSession.getEndedOn())){
+                    diffBundle.putString(DIFF_END, newSession.getEndedOn());
+                }
+
+
+
+                if(oldSession.getEntryIds().size() != newSession.getEntryIds().size()){
+                    //we cant store arrays in firebase so we need to do some conversion here...
+                    //maybe this should be handled in data layer than in here.. Oh well.
+                    //if we want to save the whole list of entries as diff
+                    /*diffBundle.putStringArray(DIFF_NUMBER_OF_ENTRIES,
+                            newSession.getEntryIds().keySet().toArray(new String[0]));*/
+
+                    //just save the number of entries, that is what we need to show in this list
+                    diffBundle.putInt(DIFF_NUMBER_OF_ENTRIES, newSession.getEntryIds().size());
+                }
 
                 if(diffBundle.size() == 0)
                     return null;
@@ -111,8 +134,8 @@ public class SessionsRecyclerAdapter extends RecyclerView.Adapter<SessionsRecycl
         // we need to create a real copy (instead of shallow clone) of Sessions
         // so that when SessionsLiveData changes its' copies, here we can see the diff and can act
         // accordingly
-        for(Session s : newSessions){
-            sessions.add(new Session(s));
+        for(Session session : newSessions){
+            sessions.add(new Session(session));
         }
         result.dispatchUpdatesTo(this);
     }
@@ -138,7 +161,7 @@ public class SessionsRecyclerAdapter extends RecyclerView.Adapter<SessionsRecycl
     }
 
     @Override
-        public void onBindViewHolder(ViewHolder holder, int position, List<Object> payloads) {
+        public void onBindViewHolder(ViewHolder holder, final int position, List<Object> payloads) {
         Log.d(TAG, "onBindViewHolder: called with position " + position);
             //called when a Session has changed and this is noticed (in setSession, in diffUtils)
         if(!payloads.isEmpty()) {
@@ -151,21 +174,40 @@ public class SessionsRecyclerAdapter extends RecyclerView.Adapter<SessionsRecycl
                     Log.d(TAG, "onBindViewHolder setting title: " + bundle.getString(key));
                     holder.sessionNameText.setText(bundle.getString(key));
                 }
-                // TODO: 10/23/17 add here other fields: startedOn and endedOn
+                if(key.equals(DIFF_END)){
+                    Log.d(TAG, "onBindViewHolder: setting end date: " + bundle.getString(key));
+                    holder.sessionEndedOn.setText(bundle.getString(key));
+                }
+
+                if(key.equals(DIFF_START)){
+                    Log.d(TAG, "onBindViewHolder: setting start date: " + bundle.getString(key));
+                    holder.sessionStartedOn.setText(bundle.getString(key));
+                }
+
+                if(key.equals(DIFF_NUMBER_OF_ENTRIES)){
+                    Log.d(TAG, "onBindViewHolder: setting number of entries: " + bundle.getInt(key));
+                    holder.numberOfEntries.setText(bundle.getInt(key));
+                }
             }
         }
         else{
             final Session session = sessions.get(position);
+            //set the text to the elements
             holder.sessionNameText.setText(session.getTitle());
+            holder.sessionStartedOn.setText(session.getStartedOn());
+            holder.sessionEndedOn.setText(session.getEndedOn());
+
+            holder.numberOfEntries.setText(Integer.toString(session.getEntryIds().size()));
+
+            //add click listener to the whole row
             holder.row.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Log.d(TAG, "onClick: row clicked: " + session.getTitle());
+                    //Log.d(TAG, "onClick: row clicked: " + session.getTitle());
+                    hostFragment.onSessionClicked(sessions.get(position));
                 }
             });
         }
-
-
     }
 
     @Override
@@ -175,13 +217,16 @@ public class SessionsRecyclerAdapter extends RecyclerView.Adapter<SessionsRecycl
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 
-        private TextView sessionNameText;
+        private TextView sessionNameText, sessionStartedOn, sessionEndedOn, numberOfEntries;
         private View row;
 
         public ViewHolder(View itemView) {
             super(itemView);
             row = itemView;
             sessionNameText = itemView.findViewById(R.id.session_name);
+            sessionStartedOn = itemView.findViewById(R.id.session_startedon);
+            sessionEndedOn = itemView.findViewById(R.id.session_endedon);
+            numberOfEntries = itemView.findViewById(R.id.session_entries_amount);
         }
     }
 }

@@ -10,6 +10,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import rtdsd.groupwork.sharedjournal.model.Session;
 
@@ -28,16 +29,24 @@ public class SessionsLiveData extends LiveData<ArrayList<Session>> {
 
     private final String DB_SESSIONS_KEY = "sessions";
 
-    public SessionsLiveData(Context context){
+    private final String journalId;
+
+
+    public SessionsLiveData(Context context, String journalId){
 
         this.context = context;
-
+        this.journalId = journalId;
 
         sessionListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
                 Session session = getSessionFromSnapshot(dataSnapshot);
+                if(session.getEntryIds() == null){
+                    session.setEntryIds(new HashMap<String, Boolean>());
+                }
+
+                // TODO: 10/27/17 we might need to add here a check if there is the session already - see JournalLiveData
 
                 ArrayList<Session> sessions = getValue();
                 if(sessions == null){
@@ -48,6 +57,7 @@ public class SessionsLiveData extends LiveData<ArrayList<Session>> {
                     sessions.add(session);
                     setValue(sessions);
                 }
+
                 //if(sessions.size() > 0) {
                     /*for (Session sess : sessions) {
                         //only use setData when we get an unknown session so observer called when needed
@@ -76,6 +86,9 @@ public class SessionsLiveData extends LiveData<ArrayList<Session>> {
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 Session changedSession = getSessionFromSnapshot(dataSnapshot);
+                if(changedSession.getEntryIds() == null){
+                    changedSession.setEntryIds(new HashMap<String, Boolean>());
+                }
 
                 ArrayList<Session> sessions = getValue();
 
@@ -126,12 +139,16 @@ public class SessionsLiveData extends LiveData<ArrayList<Session>> {
 
     @Override
     protected void onActive() {
-        database.getReference(DB_SESSIONS_KEY).addChildEventListener(sessionListener);
+        database.getReference(DB_SESSIONS_KEY)
+                .child(journalId)
+                .addChildEventListener(sessionListener);
     }
 
     @Override
     protected void onInactive() {
-        database.getReference(DB_SESSIONS_KEY).removeEventListener(sessionListener);
+        database.getReference(DB_SESSIONS_KEY)
+                .child(journalId)
+                .removeEventListener(sessionListener);
     }
 
 

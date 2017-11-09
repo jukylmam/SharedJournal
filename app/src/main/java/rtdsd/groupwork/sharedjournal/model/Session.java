@@ -12,13 +12,14 @@ import java.util.Objects;
 public class Session {
 
     private String id, title, startedOn, endedOn;
-    private HashMap<String, Boolean> listEntries;
+    private HashMap<String, Boolean> entryIds;
 
     public Session (Session s){
         this.id = s.id;
         this.title = s.title;
         this.startedOn = s.startedOn;
         this.endedOn = s.endedOn;
+        this.entryIds = s.entryIds;
     }
 
     public Session(){
@@ -57,15 +58,16 @@ public class Session {
         this.endedOn = endedOn;
     }
 
-    public HashMap<String, Boolean> getListEntries() {
-        return listEntries;
+    public HashMap<String, Boolean> getEntryIds() {
+        return entryIds;
     }
 
-    public void setListEntries(HashMap<String, Boolean> listEntries) {
-        this.listEntries = listEntries;
+    public void setEntryIds(HashMap<String, Boolean> entryIds) {
+        this.entryIds = entryIds;
     }
 
     public boolean areContentsSame(Session s){
+
         return s.title.equals(title)
                 && s.startedOn.equals(startedOn)
                 && s.endedOn.equals(endedOn)

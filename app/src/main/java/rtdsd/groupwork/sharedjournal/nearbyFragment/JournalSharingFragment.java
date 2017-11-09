@@ -103,9 +103,10 @@ public class JournalSharingFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        View v = inflater.inflate(R.layout.fragment_journal_sharing, container, false);
 
-        sharingSwitch = getView().findViewById(R.id.journal_sharing_switch);
-        journalNameField = getView().findViewById(R.id.journal_sharing_journal_id);
+        sharingSwitch = v.findViewById(R.id.journal_sharing_switch);
+        journalNameField = v.findViewById(R.id.journal_sharing_journal_id);
 
 
         sharingSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -123,7 +124,7 @@ public class JournalSharingFragment extends Fragment implements
 
         buildGoogleApiClient();
 
-        return inflater.inflate(R.layout.fragment_journal_sharing, container, false);
+        return v;
     }
 
     @Override

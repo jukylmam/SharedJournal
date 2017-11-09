@@ -2,6 +2,21 @@
     <string name="app_name">SharedJournal</string>
     <string name="title_activity_sessions">SessionsActivity</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="number_of_entries_Text">Number of Entries:</string>
+    <string name="started_on_date">Started on</string>
+    <string name="ended_on_date">Ended on</string>
+
+    <!-- strings for main activity -->
+    <string name="main_menu_scan_journals">Scan for nearby journals</string>
+    <string name="add_journal_dialog_title">Add a new journal</string>
+    <string name="add_journal_edittext_hint">Journal name</string>
+
+    <!-- strings for sessions activity -->
+    <string name="add_session_dialog_title">Add new session</string>
+    <string name="add_session_edittext_hint">Session name</string>
     <string name="journal_sharing_fragment">Tähän tulee se Nearbyllä tehty jakofragmentti</string>
     <string name="share_journal_button">Share Journal</string>
     <string name="share_journal_switch">Share journal</string>
