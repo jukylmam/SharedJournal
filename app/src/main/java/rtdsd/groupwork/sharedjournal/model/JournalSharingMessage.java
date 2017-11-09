@@ -12,18 +12,24 @@ public class JournalSharingMessage {
 
     private final String uuid;
     private final String messageContent;
+    private final String messageJournalTitle;
 
-    public static Message newNearbyMessage(String newMessageIdentifier, String newMessageContent){
-        JournalSharingMessage jSharingMessage = new JournalSharingMessage(newMessageIdentifier, newMessageContent);
+    public static Message newNearbyMessage(String newMessageIdentifier, String newMessageContent, String newJournalTitle){
+        JournalSharingMessage jSharingMessage = new JournalSharingMessage(newMessageIdentifier, newMessageContent, newJournalTitle);
         return new Message(gson.toJson(jSharingMessage).getBytes(Charset.forName("UTF-8")));
     }
 
-    private JournalSharingMessage(String messageId, String messageContent){
+    private JournalSharingMessage(String messageId, String messageContent, String journalTitle){
         this.uuid = messageId;
         this.messageContent = messageContent;
+        this.messageJournalTitle = journalTitle;
     }
 
-    public String getMessageContent() {
+    public String getContent() {
         return messageContent;
     }
+    public String getTitle() {
+        return messageJournalTitle;
+    }
+
 }

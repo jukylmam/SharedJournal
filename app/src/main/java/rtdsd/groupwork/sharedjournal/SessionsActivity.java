@@ -18,10 +18,12 @@ public class SessionsActivity extends AppCompatActivity implements SessionsFragm
 
     private final String TAG = "SessionsActivity";
     public static final String EXTRA_JOURNAL_ID = "journalId";
+    public static final String EXTRA_JOURNAL_TITLE = "journalTitle";
 
     private static final String SESSIONS_FRAGMENT_TAG = "sessionsFragment";
 
     private String journalId;
+    private String journalTitle;
     private Button shareJournalButton;
 
     @Override
@@ -34,6 +36,7 @@ public class SessionsActivity extends AppCompatActivity implements SessionsFragm
         shareJournalButton = findViewById(R.id.journal_share_button);
 
         journalId = getIntent().getStringExtra(EXTRA_JOURNAL_ID);
+        journalTitle = getIntent().getStringExtra(EXTRA_JOURNAL_ID);
 
         Log.d(TAG, "onCreate: extra journal id got:" + journalId);
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -42,7 +45,7 @@ public class SessionsActivity extends AppCompatActivity implements SessionsFragm
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
 
-        SessionsFragment sessionsFragment = SessionsFragment.newInstance(journalId,"");
+        SessionsFragment sessionsFragment = SessionsFragment.newInstance(journalId, journalTitle);
         transaction.add(R.id.fragmentLayout, sessionsFragment, SESSIONS_FRAGMENT_TAG);
         transaction.commit();
 
@@ -50,7 +53,7 @@ public class SessionsActivity extends AppCompatActivity implements SessionsFragm
         shareJournalButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Fragment sharingFragment = JournalSharingFragment.newInstance(journalId);
+                Fragment sharingFragment = JournalSharingFragment.newInstance(journalId, journalTitle);
                 FragmentTransaction shareButtonTransaction = getSupportFragmentManager().beginTransaction();
                 shareButtonTransaction.replace(R.id.fragmentLayout, sharingFragment);
                 shareButtonTransaction.addToBackStack(null);
