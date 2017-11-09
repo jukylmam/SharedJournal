@@ -4,6 +4,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import rtdsd.groupwork.sharedjournal.model.RpgJournal;
+import rtdsd.groupwork.sharedjournal.model.Session;
 
 /**
  * Created by domuska on 11/2/17.
@@ -25,4 +26,6 @@ public class FireBaseJournalCommunication {
 
         databaseReference.child(DB_REF_JOURNALS).push().setValue(journal);
     }
+
+
 }

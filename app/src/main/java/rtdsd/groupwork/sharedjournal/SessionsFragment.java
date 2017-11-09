@@ -19,6 +19,8 @@ import java.util.ArrayList;
 
 import rtdsd.groupwork.sharedjournal.model.Session;
 import rtdsd.groupwork.sharedjournal.recyclerViewAdapters.SessionsRecyclerAdapter;
+import rtdsd.groupwork.sharedjournal.viewmodel.FireBaseJournalCommunication;
+import rtdsd.groupwork.sharedjournal.viewmodel.FireBaseSessionCommunication;
 import rtdsd.groupwork.sharedjournal.viewmodel.SessionsViewModel;
 import rtdsd.groupwork.sharedjournal.viewmodel.SessionsViewModelFactory;
 
@@ -46,6 +48,7 @@ public class SessionsFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     SessionsViewModel model;
+    FireBaseSessionCommunication fireBaseCommunication;
 
     public SessionsFragment() {
         // Required empty public constructor
@@ -76,6 +79,7 @@ public class SessionsFragment extends Fragment {
             journalId = getArguments().getString(JOURNAL_ID_PARAM);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        fireBaseCommunication = new FireBaseSessionCommunication();
     }
 
     @Override
@@ -134,6 +138,7 @@ public class SessionsFragment extends Fragment {
 
     public void userAddingSession(String name){
         Log.d(TAG, "userAddingSession: in fragment, got session name" + name);
+        fireBaseCommunication.addSession(journalId, name);
     }
 
     /**

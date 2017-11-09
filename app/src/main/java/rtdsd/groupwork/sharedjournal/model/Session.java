@@ -67,6 +67,7 @@ public class Session {
     }
 
     public boolean areContentsSame(Session s){
+
         return s.title.equals(title)
                 && s.startedOn.equals(startedOn)
                 && s.endedOn.equals(endedOn)

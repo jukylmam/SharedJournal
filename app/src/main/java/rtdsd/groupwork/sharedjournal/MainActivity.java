@@ -24,7 +24,7 @@ import rtdsd.groupwork.sharedjournal.recyclerViewAdapters.JournalsRecyclerAdapte
 import rtdsd.groupwork.sharedjournal.viewmodel.FireBaseJournalCommunication;
 import rtdsd.groupwork.sharedjournal.viewmodel.JournalViewModel;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends BaseActivity
         implements BaseAppDialogFragment.OnDialogFragmentInteraction {
 
     private final String TAG = "MainActivity";

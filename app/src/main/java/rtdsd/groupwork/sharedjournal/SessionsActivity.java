@@ -14,7 +14,7 @@ import android.view.View;
 import rtdsd.groupwork.sharedjournal.DialogFragments.AddElementDialogFragment;
 import rtdsd.groupwork.sharedjournal.DialogFragments.BaseAppDialogFragment;
 
-public class SessionsActivity extends AppCompatActivity implements
+public class SessionsActivity extends BaseActivity implements
         SessionsFragment.OnFragmentInteractionListener,
         BaseAppDialogFragment.OnDialogFragmentInteraction {
 
