@@ -1,14 +1,11 @@
 package rtdsd.groupwork.sharedjournal.nearbyFragment;
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.ListView;
@@ -36,7 +33,7 @@ public class JournalScanningActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = "JournalScanningActivity";
-    private static final int TTL_IN_SECONDS = 30;
+    private static final int TTL_IN_SECONDS = 3 * 60; // Three minutes.
 
     private TextView scanningTitle;
     private SwitchCompat scanningSwitch;
@@ -57,6 +54,7 @@ public class JournalScanningActivity extends AppCompatActivity implements
             @Override
             public void onFound(final Message message) {
                 // Called when a new message is found.
+                Log.d(TAG, "onFound: Message found.");
                 nearbyDevicesArrayAdapter.add(
                         JournalSharingMessage.fromNearbyMessage(message).getJournalTitle());
             }
@@ -64,6 +62,7 @@ public class JournalScanningActivity extends AppCompatActivity implements
             @Override
             public void onLost(final Message message) {
                 // Called when a message is no longer detectable nearby.
+                Log.d(TAG, "onLost: Message lost.");
                 nearbyDevicesArrayAdapter.remove(
                         JournalSharingMessage.fromNearbyMessage(message).getJournalTitle());
             }
