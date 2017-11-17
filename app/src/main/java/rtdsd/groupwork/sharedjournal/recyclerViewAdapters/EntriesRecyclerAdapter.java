@@ -5,11 +5,15 @@ import android.support.annotation.Nullable;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import rtdsd.groupwork.sharedjournal.R;
 import rtdsd.groupwork.sharedjournal.model.Entry;
 import rtdsd.groupwork.sharedjournal.model.Session;
 
@@ -17,7 +21,7 @@ import rtdsd.groupwork.sharedjournal.model.Session;
  * Created by domuska on 11/9/17.
  */
 
-public class EntriesRecyclerAdapter extends RecyclerView.Adapter<JournalsRecyclerAdapter.ViewHolder> {
+public class EntriesRecyclerAdapter extends RecyclerView.Adapter<EntriesRecyclerAdapter.ViewHolder> {
 
     private final static String TAG = "EntriesRecyclerAdapter";
     private final static String DIFF_ENTRY_BODY = "diffEntryBody";
@@ -26,18 +30,51 @@ public class EntriesRecyclerAdapter extends RecyclerView.Adapter<JournalsRecycle
     private ArrayList<Entry> entries = new ArrayList<>();
 
     @Override
-    public void onBindViewHolder(JournalsRecyclerAdapter.ViewHolder holder, int position, List<Object> payloads) {
-        super.onBindViewHolder(holder, position, payloads);
+    public void onBindViewHolder(EntriesRecyclerAdapter.ViewHolder holder,
+                                 int position, List<Object> payloads) {
+
+        Log.d(TAG, "onBindViewHolder: main onBindViewHolder called");
+
+        if(!payloads.isEmpty()){
+            //get the bundle, it's the first element in payloads, this from official docs
+            Bundle bundle = (Bundle) payloads.get(0);
+
+            //iterate through the changed things in the bundle
+            for(String key : bundle.keySet()){
+                if(key.equals(DIFF_ENTRY_BODY)){
+                    holder.bodyView.setText(bundle.getString(key));
+                }
+                if(key.equals(DIFF_ENTRY_TITLE)){
+                    holder.titleView.setText(bundle.getString(key));
+                }
+            }
+        }
+        else{
+            final Entry entry = entries.get(position);
+            holder.titleView.setText(entry.getEntryTitle());
+            holder.bodyView.setText(entry.getEntryBody());
+            holder.rowView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d(TAG, "onClick: entry clicked! ID: " + entry.getId());
+                }
+            });
+        }
     }
 
     @Override
-    public JournalsRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return null;
+    public EntriesRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+
+        //inflate the layout that shows a single entry, passed to ViewHolder constructor
+        View v = inflater.inflate(R.layout.entries_list_row, parent, false);
+
+        return new EntriesRecyclerAdapter.ViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(JournalsRecyclerAdapter.ViewHolder holder, int position) {
-
+    public void onBindViewHolder(EntriesRecyclerAdapter.ViewHolder holder, int position) {
+        Log.d(TAG, "onBindViewHolder: onBindViewHolder called");
     }
 
     @Override
@@ -90,7 +127,8 @@ public class EntriesRecyclerAdapter extends RecyclerView.Adapter<JournalsRecycle
                 Entry newEntry = newEntries.get(newItemPosition);
                 Bundle diffBundle = new Bundle();
 
-                //check what has changed in the entry
+                //check what has changed in the entry, ID should never change on an element
+                //so changes to it are not handled
                 if(!oldEntry.getEntryBody().equals(newEntry.getEntryBody())){
                     diffBundle.putString(DIFF_ENTRY_BODY, newEntry.getEntryBody());
                 }
@@ -118,4 +156,20 @@ public class EntriesRecyclerAdapter extends RecyclerView.Adapter<JournalsRecycle
         }
         result.dispatchUpdatesTo(this);
     }
+
+    class ViewHolder extends RecyclerView.ViewHolder{
+
+        private TextView titleView, bodyView;
+        private View rowView;
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+            titleView = itemView.findViewById(R.id.entry_title);
+            bodyView = itemView.findViewById(R.id.entry_body);
+            rowView = itemView;
+        }
+
+    }
+
+
 }

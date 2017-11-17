@@ -161,7 +161,7 @@ public class SessionsRecyclerAdapter extends RecyclerView.Adapter<SessionsRecycl
     }
 
     @Override
-        public void onBindViewHolder(ViewHolder holder, final int position, List<Object> payloads) {
+    public void onBindViewHolder(final ViewHolder holder, final int position, List<Object> payloads) {
         Log.d(TAG, "onBindViewHolder: called with position " + position);
             //called when a Session has changed and this is noticed (in setSession, in diffUtils)
         if(!payloads.isEmpty()) {
@@ -204,7 +204,7 @@ public class SessionsRecyclerAdapter extends RecyclerView.Adapter<SessionsRecycl
                 @Override
                 public void onClick(View view) {
                     //Log.d(TAG, "onClick: row clicked: " + session.getTitle());
-                    hostFragment.onSessionClicked(sessions.get(position));
+                    hostFragment.onSessionClicked(sessions.get(holder.getAdapterPosition()));
                 }
             });
         }
@@ -215,12 +215,12 @@ public class SessionsRecyclerAdapter extends RecyclerView.Adapter<SessionsRecycl
         return sessions.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    class ViewHolder extends RecyclerView.ViewHolder{
 
         private TextView sessionNameText, sessionStartedOn, sessionEndedOn, numberOfEntries;
         private View row;
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
             row = itemView;
             sessionNameText = itemView.findViewById(R.id.session_name);

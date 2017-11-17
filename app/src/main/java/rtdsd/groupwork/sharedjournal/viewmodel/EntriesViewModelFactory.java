@@ -25,6 +25,6 @@ public class EntriesViewModelFactory extends ViewModelProvider.NewInstanceFactor
 
     @Override
     public <T extends ViewModel> T create(Class<T> modelClass) {
-        return (T) new SessionsViewModel(application, entryId);
+        return (T) new EntriesViewModel(application, entryId);
     }
 }

@@ -128,7 +128,6 @@ public class JournalsRecyclerAdapter extends RecyclerView.Adapter<JournalsRecycl
                 Intent i = new Intent(view.getContext(), SessionsActivity.class);
                 i.putExtra(SessionsActivity.EXTRA_JOURNAL_ID, journal.getId());
                 view.getContext().startActivity(i);
-
             }
         });
     }

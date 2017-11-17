@@ -35,21 +35,52 @@ public class EntriesLiveData extends LiveData<ArrayList<Entry>> {
         entryListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Log.d(TAG, "onChildAdded: datasnapshot value: " + dataSnapshot.getValue());
                 Entry entry = dataSnapshot.getValue(Entry.class);
                 if(entry != null) {
                     Log.d(TAG, "onChildAdded: child added: " + entry.getEntryTitle());
-                }
+                    entry.setId(dataSnapshot.getKey());
 
+                    ArrayList<Entry> entries = getValue();
+                    if(entries == null){
+                        entries = new ArrayList<>();
+                    }
+
+                    if(!entries.contains(entry)){
+                        entry.setId(dataSnapshot.getKey());
+                        entries.add(entry);
+                        setValue(entries);
+                    }
+                }
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                //update this.value here
+                Log.d(TAG, "onChildChanged: snapshot: " + dataSnapshot.getValue());
+                Entry entry = dataSnapshot.getValue(Entry.class);
+
+                if(entry != null){
+                    ArrayList<Entry> entries = getValue();
+                    entry.setId(dataSnapshot.getKey());
+                    if(entries != null){
+                        entries.get(entries.indexOf(entry)).updateValues(entry);
+                        setValue(entries);
+                    }
+                }
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                //update this.value here
+                Entry entry = dataSnapshot.getValue(Entry.class);
+                if (entry != null) {
+                    entry.setId(dataSnapshot.getKey());
+                }
+
+                ArrayList<Entry> entries = getValue();
+                if (entries != null) {
+                    entries.remove(entry);
+                    setValue(entries);
+                }
             }
 
             @Override
@@ -68,6 +99,7 @@ public class EntriesLiveData extends LiveData<ArrayList<Entry>> {
 
     @Override
     protected void onActive() {
+        Log.d(TAG, "onActive: attaching firebase reference to session ID: " + sessionId);
         database.getReference(ENTRIES_KEY)
                 .child(sessionId)
                 .addChildEventListener(entryListener);
@@ -75,6 +107,7 @@ public class EntriesLiveData extends LiveData<ArrayList<Entry>> {
 
     @Override
     protected void onInactive() {
+        Log.d(TAG, "onInactive: unattaching firebase reference to session ID" + sessionId);
         database.getReference(ENTRIES_KEY)
                 .child(sessionId)
                 .removeEventListener(entryListener);

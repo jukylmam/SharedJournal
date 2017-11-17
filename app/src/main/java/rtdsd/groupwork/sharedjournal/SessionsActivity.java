@@ -57,7 +57,7 @@ public class SessionsActivity extends BaseActivity implements
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
 
-        EntriesFragment entriesFragment = EntriesFragment.newInstance("", "");
+        EntriesFragment entriesFragment = EntriesFragment.newInstance(session.getId());
 
         transaction.replace(R.id.fragmentLayout, entriesFragment, ENTRIES_FRAGMENT_TAG);
         transaction.addToBackStack(null);
