@@ -70,6 +70,7 @@ public class JournalScanningActivity extends AppCompatActivity implements
         };
 
         scanningTitle = findViewById(R.id.journal_sharing_header_text);
+        scanningSwitch = findViewById(R.id.journal_scanning_switch);
 
         scanningSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
