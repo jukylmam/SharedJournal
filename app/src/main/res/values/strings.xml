@@ -17,4 +17,6 @@
     <!-- strings for sessions activity -->
     <string name="add_session_dialog_title">Add new session</string>
     <string name="add_session_edittext_hint">Session name</string>
+    <string name="add_entry_dialog_title">Add new entry</string>
+    <string name="add_entry_edittext_hint">Add entry text</string>
 </resources>

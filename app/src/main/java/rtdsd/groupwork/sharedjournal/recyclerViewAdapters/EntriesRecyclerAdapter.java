@@ -33,7 +33,6 @@ public class EntriesRecyclerAdapter extends RecyclerView.Adapter<EntriesRecycler
     public void onBindViewHolder(EntriesRecyclerAdapter.ViewHolder holder,
                                  int position, List<Object> payloads) {
 
-        Log.d(TAG, "onBindViewHolder: main onBindViewHolder called");
 
         if(!payloads.isEmpty()){
             //get the bundle, it's the first element in payloads, this from official docs

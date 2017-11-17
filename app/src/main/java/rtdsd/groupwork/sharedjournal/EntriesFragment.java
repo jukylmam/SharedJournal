@@ -20,6 +20,7 @@ import rtdsd.groupwork.sharedjournal.model.Entry;
 import rtdsd.groupwork.sharedjournal.recyclerViewAdapters.EntriesRecyclerAdapter;
 import rtdsd.groupwork.sharedjournal.viewmodel.EntriesViewModel;
 import rtdsd.groupwork.sharedjournal.viewmodel.EntriesViewModelFactory;
+import rtdsd.groupwork.sharedjournal.viewmodel.FireBaseEntryCommunication;
 
 
 /**
@@ -35,6 +36,10 @@ public class EntriesFragment extends Fragment {
     private static final String ARG_ENTRY_ID = "entryIdParam";
 
     private String entryId;
+
+    private FireBaseEntryCommunication fireBaseEntryCommunication;
+
+    EntriesRecyclerAdapter adapter;
 
     private OnEntriesFragmentInteractionListener mListener;
 
@@ -64,6 +69,7 @@ public class EntriesFragment extends Fragment {
         if (getArguments() != null) {
             entryId = getArguments().getString(ARG_ENTRY_ID);
         }
+        fireBaseEntryCommunication = new FireBaseEntryCommunication(entryId);
     }
 
     @Override
@@ -74,7 +80,7 @@ public class EntriesFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_entries, container, false);
 
         RecyclerView recyclerView = v.findViewById(R.id.entries_recyclerview);
-        final EntriesRecyclerAdapter adapter = new EntriesRecyclerAdapter();
+        adapter = new EntriesRecyclerAdapter();
         recyclerView.setAdapter(adapter);
 
         //GridLayoutManager manager = new GridLayoutManager(getContext(), 2);
@@ -122,6 +128,11 @@ public class EntriesFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    public void userAddingEntry(String entryBody) {
+        String entryTitle = "Entry " + (adapter.getItemCount()+1);
+        fireBaseEntryCommunication.addEntry(entryTitle, entryBody);
     }
 
     /**

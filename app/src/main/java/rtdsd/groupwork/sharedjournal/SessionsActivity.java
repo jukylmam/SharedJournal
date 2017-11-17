@@ -2,6 +2,7 @@ package rtdsd.groupwork.sharedjournal;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.IntDef;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
@@ -25,9 +26,19 @@ public class SessionsActivity extends BaseActivity implements
     private static final String SESSIONS_FRAGMENT_TAG = "sessionsFragment";
     private static final String ENTRIES_FRAGMENT_TAG = "entriesFragment";
     private static final String ADD_SESSION_FRAGMENT_TAG = "addSessionFragmentTag";
-
+    private static final String ADD_ENTRY_FRAGMENT_TAG = "addEntryFragmentTag";
 
     private String journalId;
+
+    private FloatingActionButton fab;
+
+    @IntDef({SESSIONS_FRAGMENT_ACTIVE, ENTRIES_FRAGMENT_ACTIVE})
+    public @interface ActiveFragment{}
+    public static final int SESSIONS_FRAGMENT_ACTIVE = 0;
+    public static final int ENTRIES_FRAGMENT_ACTIVE = 1;
+
+    @ActiveFragment
+    private int activeFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,9 +50,9 @@ public class SessionsActivity extends BaseActivity implements
         journalId = getIntent().getStringExtra(EXTRA_JOURNAL_ID);
 
         Log.d(TAG, "onCreate: extra journal id got:" + journalId);
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new FabSessionsOnClickListener());
+        fab = findViewById(R.id.fab);
 
+        setCurrentlyActiveFabListener(SESSIONS_FRAGMENT_ACTIVE);
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
 
@@ -62,6 +73,7 @@ public class SessionsActivity extends BaseActivity implements
         transaction.replace(R.id.fragmentLayout, entriesFragment, ENTRIES_FRAGMENT_TAG);
         transaction.addToBackStack(null);
         transaction.commit();
+        setCurrentlyActiveFabListener(ENTRIES_FRAGMENT_ACTIVE);
     }
 
     @Override
@@ -71,12 +83,43 @@ public class SessionsActivity extends BaseActivity implements
 
     @Override
     public void onDialogOkButtonClicked(String editTextContents) {
-        ((SessionsFragment)getSupportFragmentManager()
-                .findFragmentByTag(SESSIONS_FRAGMENT_TAG))
-                .userAddingSession(editTextContents);
+        if(activeFragment == SESSIONS_FRAGMENT_ACTIVE) {
+            ((SessionsFragment) getSupportFragmentManager()
+                    .findFragmentByTag(SESSIONS_FRAGMENT_TAG))
+                    .userAddingSession(editTextContents);
+        }
+        else{
+            ((EntriesFragment) getSupportFragmentManager()
+                    .findFragmentByTag(ENTRIES_FRAGMENT_TAG))
+                    .userAddingEntry(editTextContents);
+        }
     }
 
-    class FabSessionsOnClickListener implements View.OnClickListener{
+    private void setCurrentlyActiveFabListener(@ActiveFragment int activeFragment){
+        this.activeFragment = activeFragment;
+        if(activeFragment == SESSIONS_FRAGMENT_ACTIVE){
+            fab.setOnClickListener(new FabAddSessionClickListener());
+        }
+        else{
+            fab.setOnClickListener(new FabAddEntryClickListener());
+        }
+    }
+
+    class FabAddEntryClickListener implements View.OnClickListener{
+        @Override
+        public void onClick(View v) {
+            Bundle args = new Bundle();
+            args.putString(BaseAppDialogFragment.DIALOG_TITLE_ARG,
+                    getString(R.string.add_entry_dialog_title));
+            args.putString(BaseAppDialogFragment.DIALOG_EDITTEXT_HINT_ARG,
+                    getString(R.string.add_entry_edittext_hint));
+            DialogFragment addEntryFragment = new AddElementDialogFragment();
+            addEntryFragment.setArguments(args);
+            addEntryFragment.show(getSupportFragmentManager(), ADD_ENTRY_FRAGMENT_TAG);
+        }
+    }
+
+    class FabAddSessionClickListener implements View.OnClickListener{
         @Override
         public void onClick(View view) {
 
