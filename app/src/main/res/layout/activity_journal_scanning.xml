@@ -17,4 +17,11 @@
         android:layout_height="wrap_content"
         android:text="@string/scan_journal_switch" />
 
+    <ListView
+        android:id="@+id/nearby_devices_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10pt"
+        android:transcriptMode="alwaysScroll" />
+
 </android.support.constraint.ConstraintLayout>

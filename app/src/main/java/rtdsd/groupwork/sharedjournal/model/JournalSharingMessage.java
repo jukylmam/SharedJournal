@@ -32,4 +32,19 @@ public class JournalSharingMessage {
         return messageJournalTitle;
     }
 
+    public static JournalSharingMessage fromNearbyMessage(Message message) {
+        String nearbyMessageString = new String(message.getContent()).trim();
+        return gson.fromJson(
+                (new String(nearbyMessageString.getBytes(Charset.forName("UTF-8")))),
+                JournalSharingMessage.class);
+    }
+
+    public String getJournalTitle() {
+        return messageJournalTitle;
+    }
+
+    public String getMessageContent() {
+        return messageContent;
+    }
+
 }
