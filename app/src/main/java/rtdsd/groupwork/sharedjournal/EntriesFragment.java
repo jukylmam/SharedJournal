@@ -83,7 +83,7 @@ public class EntriesFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_entries, container, false);
 
         RecyclerView recyclerView = v.findViewById(R.id.entries_recyclerview);
-        EntriesRecyclerAdapter adapter = new EntriesRecyclerAdapter();
+        final EntriesRecyclerAdapter adapter = new EntriesRecyclerAdapter();
         recyclerView.setAdapter(adapter);
 
         GridLayoutManager manager = new GridLayoutManager(getContext(), 2);
@@ -98,7 +98,7 @@ public class EntriesFragment extends Fragment {
             @Override
             public void onChanged(@Nullable ArrayList<Entry> entries) {
                 if(entries != null){
-                    // TODO: 11/9/17 do stuff here I guess, inform adapter
+                    adapter.setEntries(entries);
                 }
             }
         });

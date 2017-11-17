@@ -6,7 +6,25 @@ package rtdsd.groupwork.sharedjournal.model;
 
 public class Entry {
 
-    String entryTitle, entryBody;
+    public Entry(Entry copyEntry){
+        this.id = copyEntry.getId();
+        this.entryBody = copyEntry.getEntryBody();
+        this.entryTitle = copyEntry.getEntryTitle();
+    }
+
+    public Entry(){
+        //empty constructor for firebase
+    }
+
+    private String entryTitle, entryBody, id;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getEntryTitle() {
         return entryTitle;
@@ -22,5 +40,11 @@ public class Entry {
 
     public void setEntryBody(String entryBody) {
         this.entryBody = entryBody;
+    }
+
+    public boolean areContentsSame(Entry newItem) {
+        return this.id.equals(newItem.id)
+                && this.entryBody.equals(newItem.entryBody)
+                && this.entryTitle.equals(newItem.entryTitle);
     }
 }
