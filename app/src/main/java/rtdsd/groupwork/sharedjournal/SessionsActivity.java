@@ -1,6 +1,5 @@
 package rtdsd.groupwork.sharedjournal;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.IntDef;
 import android.support.design.widget.FloatingActionButton;
@@ -40,6 +39,8 @@ public class SessionsActivity extends BaseActivity implements
     @ActiveFragment
     private int activeFragment;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,7 +53,7 @@ public class SessionsActivity extends BaseActivity implements
         Log.d(TAG, "onCreate: extra journal id got:" + journalId);
         fab = findViewById(R.id.fab);
 
-        setCurrentlyActiveFabListener(SESSIONS_FRAGMENT_ACTIVE);
+        setCurrentlyActiveFragment(SESSIONS_FRAGMENT_ACTIVE);
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
 
@@ -73,12 +74,12 @@ public class SessionsActivity extends BaseActivity implements
         transaction.replace(R.id.fragmentLayout, entriesFragment, ENTRIES_FRAGMENT_TAG);
         transaction.addToBackStack(null);
         transaction.commit();
-        setCurrentlyActiveFabListener(ENTRIES_FRAGMENT_ACTIVE);
+        setCurrentlyActiveFragment(ENTRIES_FRAGMENT_ACTIVE);
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
-
+    public void entryFragmentDetaching() {
+        setCurrentlyActiveFragment(SESSIONS_FRAGMENT_ACTIVE);
     }
 
     @Override
@@ -95,7 +96,7 @@ public class SessionsActivity extends BaseActivity implements
         }
     }
 
-    private void setCurrentlyActiveFabListener(@ActiveFragment int activeFragment){
+    private void setCurrentlyActiveFragment(@ActiveFragment int activeFragment){
         this.activeFragment = activeFragment;
         if(activeFragment == SESSIONS_FRAGMENT_ACTIVE){
             fab.setOnClickListener(new FabAddSessionClickListener());

@@ -162,7 +162,7 @@ public class SessionsRecyclerAdapter extends RecyclerView.Adapter<SessionsRecycl
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position, List<Object> payloads) {
-        Log.d(TAG, "onBindViewHolder: called with position " + position);
+        //Log.d(TAG, "onBindViewHolder: called with position " + position);
             //called when a Session has changed and this is noticed (in setSession, in diffUtils)
         if(!payloads.isEmpty()) {
             Log.d(TAG, "onBindViewHolder: payloads not empty");
