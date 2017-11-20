@@ -9,12 +9,22 @@
         android:id="@+id/dialogfragment_edit_element"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/dialog_edit_element"/>
+        android:text="@string/dialog_edit_element"
+        android:background="@null"/>
+    
+
+    <!-- divider between the buttons -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
 
     <Button
         android:id="@+id/dialogfragment_delete_element"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/dialog_delete_element"/>
+        android:text="@string/dialog_delete_element"
+        android:background="@null"/>
 
 </LinearLayout>
