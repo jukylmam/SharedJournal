@@ -37,89 +37,7 @@ public class SessionsLiveData extends LiveData<ArrayList<Session>> {
         this.context = context;
         this.journalId = journalId;
 
-        sessionListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-
-                Session session = getSessionFromSnapshot(dataSnapshot);
-                if(session.getEntryIds() == null){
-                    session.setEntryIds(new HashMap<String, Boolean>());
-                }
-
-                // TODO: 10/27/17 we might need to add here a check if there is the session already - see JournalLiveData
-
-                ArrayList<Session> sessions = getValue();
-                if(sessions == null){
-                    sessions = new ArrayList<>();
-                }
-                if(session != null && !sessions.contains(session)){
-                    Log.d(TAG, "onChildAdded: got new child " + dataSnapshot.getKey());
-                    sessions.add(session);
-                    setValue(sessions);
-                }
-
-                //if(sessions.size() > 0) {
-                    /*for (Session sess : sessions) {
-                        //only use setData when we get an unknown session so observer called when needed
-                        if (!sess.getId().equals(dataSnapshot.getKey())) {
-                            Session session = dataSnapshot.getValue(Session.class);
-                            Log.d(TAG, "onChildAdded: got new child " + dataSnapshot.getKey());
-                            if (session != null) {
-                                session.setId(dataSnapshot.getKey());
-                                sessions.add(session);
-                                setValue(sessions);
-                            }
-
-                            //finish for loop, we have handled the new session
-                            break;
-                        }
-                    }*/
-                //}
-                /*else{
-                    Session session = dataSnapshot.getValue(Session.class);
-                    session.setId(dataSnapshot.getKey());
-                    sessions.add(session);
-                    setValue(sessions);
-                }*/
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                Session changedSession = getSessionFromSnapshot(dataSnapshot);
-                if(changedSession.getEntryIds() == null){
-                    changedSession.setEntryIds(new HashMap<String, Boolean>());
-                }
-
-                ArrayList<Session> sessions = getValue();
-
-                if (sessions != null) {
-                    sessions.get(sessions.indexOf(changedSession)).updateValues(changedSession);
-                    setValue(sessions);
-                }
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                Session removableSession = getSessionFromSnapshot(dataSnapshot);
-
-                ArrayList<Session> sessions = getValue();
-                if (sessions != null) {
-                    sessions.remove(removableSession);
-                }
-                setValue(sessions);
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                Log.d(TAG, "onChildMoved: session moved, should maybe do something");
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e(TAG, "onCancelled: cancelled database call: " + databaseError);
-            }
-        };
+        sessionListener = new SessionsListener();
 
         database = FirebaseDatabase.getInstance();
     }
@@ -149,5 +67,63 @@ public class SessionsLiveData extends LiveData<ArrayList<Session>> {
         database.getReference(DB_SESSIONS_KEY)
                 .child(journalId)
                 .removeEventListener(sessionListener);
+    }
+
+    private class SessionsListener implements ChildEventListener {
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+            Session session = getSessionFromSnapshot(dataSnapshot);
+            if(session.getEntryIds() == null){
+                session.setEntryIds(new HashMap<String, Boolean>());
+            }
+
+            ArrayList<Session> sessions = getValue();
+            if(sessions == null){
+                sessions = new ArrayList<>();
+            }
+            if(!sessions.contains(session)){
+                Log.d(TAG, "onChildAdded: got new child " + dataSnapshot.getKey());
+                sessions.add(session);
+                setValue(sessions);
+            }
+        }
+
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            Session changedSession = getSessionFromSnapshot(dataSnapshot);
+            if(changedSession.getEntryIds() == null){
+                changedSession.setEntryIds(new HashMap<String, Boolean>());
+            }
+
+            ArrayList<Session> sessions = getValue();
+
+            if (sessions != null) {
+                sessions.get(sessions.indexOf(changedSession)).updateValues(changedSession);
+                setValue(sessions);
+            }
+        }
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            Session removableSession = getSessionFromSnapshot(dataSnapshot);
+
+            ArrayList<Session> sessions = getValue();
+            if (sessions != null) {
+                sessions.remove(removableSession);
+            }
+            setValue(sessions);
+        }
+
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            Log.d(TAG, "onChildMoved: session moved, should maybe do something");
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+            Log.e(TAG, "onCancelled: cancelled database call: " + databaseError);
+        }
     }
 }
