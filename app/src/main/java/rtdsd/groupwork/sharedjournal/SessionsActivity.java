@@ -127,13 +127,18 @@ public class SessionsActivity extends BaseActivity implements
     @Override
     public void onEditClicked(String id) {
         Log.d(TAG, "onEditClicked: you seem to have long clicked element with id " + id);
+        //edit the dialogfragment contents to show edit
+
+        //maybe just a cross-fade between the new
     }
 
     @Override
     public void onDeleteClicked(String id) {
         Log.d(TAG, "onDeleteClicked: you seem to have long clicked element with id " + id);
+        //edit the dialogfragment contents to warn the user of the delete
     }
 
+    //fab onClickListener implementations
     class FabAddEntryClickListener implements View.OnClickListener{
         @Override
         public void onClick(View v) {

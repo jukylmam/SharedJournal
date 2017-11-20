@@ -10,8 +10,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/dialog_edit_element"
-        android:background="@null"/>
-    
+        android:background="@null"
+        android:foreground="?android:attr/selectableItemBackground"/>
+
 
     <!-- divider between the buttons -->
     <View
@@ -25,6 +26,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/dialog_delete_element"
-        android:background="@null"/>
+        android:background="@null"
+        android:foreground="?android:attr/selectableItemBackground"/>
 
 </LinearLayout>
