@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
+import rtdsd.groupwork.sharedjournal.DialogFragments.EditDeleteDialogFragment;
 import rtdsd.groupwork.sharedjournal.model.Entry;
 import rtdsd.groupwork.sharedjournal.recyclerViewAdapters.EntriesRecyclerAdapter;
 import rtdsd.groupwork.sharedjournal.viewmodel.EntriesViewModel;
@@ -79,7 +80,7 @@ public class EntriesFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_entries, container, false);
 
         RecyclerView recyclerView = v.findViewById(R.id.entries_recyclerview);
-        adapter = new EntriesRecyclerAdapter();
+        adapter = new EntriesRecyclerAdapter(this);
         recyclerView.setAdapter(adapter);
 
         //GridLayoutManager manager = new GridLayoutManager(getContext(), 2);
@@ -135,6 +136,11 @@ public class EntriesFragment extends Fragment {
         fireBaseEntryCommunication.addEntry(entryTitle, entryBody);
     }
 
+    public void elementLongClicked(String id) {
+        //just pass the call to the activity
+        mListener.onElementLongClicked(id);
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -146,7 +152,7 @@ public class EntriesFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnEntriesFragmentInteractionListener {
-        // TODO: Update argument type and name
         void entryFragmentDetaching();
+        void onElementLongClicked(String id);
     }
 }

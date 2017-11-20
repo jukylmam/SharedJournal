@@ -12,12 +12,14 @@ import android.view.View;
 
 import rtdsd.groupwork.sharedjournal.DialogFragments.AddElementDialogFragment;
 import rtdsd.groupwork.sharedjournal.DialogFragments.BaseAppDialogFragment;
+import rtdsd.groupwork.sharedjournal.DialogFragments.EditDeleteDialogFragment;
 import rtdsd.groupwork.sharedjournal.model.Session;
 
 public class SessionsActivity extends BaseActivity implements
         SessionsFragment.OnSessionsFragmentInteractionListener,
         EntriesFragment.OnEntriesFragmentInteractionListener,
-        BaseAppDialogFragment.OnDialogFragmentInteraction {
+        BaseAppDialogFragment.OnDialogFragmentInteraction,
+        EditDeleteDialogFragment.onEditDeleteFragmentInteraction{
 
     private final String TAG = "SessionsActivity";
     public static final String EXTRA_JOURNAL_ID = "journalId";
@@ -26,6 +28,7 @@ public class SessionsActivity extends BaseActivity implements
     private static final String ENTRIES_FRAGMENT_TAG = "entriesFragment";
     private static final String ADD_SESSION_FRAGMENT_TAG = "addSessionFragmentTag";
     private static final String ADD_ENTRY_FRAGMENT_TAG = "addEntryFragmentTag";
+    private static final String EDIT_DELETE_FRAGMENT_TAG = "editDeleteFragmentTag";
 
     private String journalId;
 
@@ -38,7 +41,6 @@ public class SessionsActivity extends BaseActivity implements
 
     @ActiveFragment
     private int activeFragment;
-
 
 
     @Override
@@ -62,6 +64,24 @@ public class SessionsActivity extends BaseActivity implements
         transaction.commit();
     }
 
+
+    @Override
+    public void entryFragmentDetaching() {
+        setCurrentlyActiveFragment(SESSIONS_FRAGMENT_ACTIVE);
+    }
+
+
+    private void setCurrentlyActiveFragment(@ActiveFragment int activeFragment){
+        this.activeFragment = activeFragment;
+        if(activeFragment == SESSIONS_FRAGMENT_ACTIVE){
+            fab.setOnClickListener(new FabAddSessionClickListener());
+        }
+        else{
+            fab.setOnClickListener(new FabAddEntryClickListener());
+        }
+    }
+
+    //interface implementation for SessionsFragment
     @Override
     public void openSession(Session session) {
         Log.d(TAG, "openSession: opening a new session: " + session.toString());
@@ -77,11 +97,7 @@ public class SessionsActivity extends BaseActivity implements
         setCurrentlyActiveFragment(ENTRIES_FRAGMENT_ACTIVE);
     }
 
-    @Override
-    public void entryFragmentDetaching() {
-        setCurrentlyActiveFragment(SESSIONS_FRAGMENT_ACTIVE);
-    }
-
+    //interface implementation for BaseAppDialogFragment
     @Override
     public void onDialogOkButtonClicked(String editTextContents) {
         if(activeFragment == SESSIONS_FRAGMENT_ACTIVE) {
@@ -96,14 +112,26 @@ public class SessionsActivity extends BaseActivity implements
         }
     }
 
-    private void setCurrentlyActiveFragment(@ActiveFragment int activeFragment){
-        this.activeFragment = activeFragment;
-        if(activeFragment == SESSIONS_FRAGMENT_ACTIVE){
-            fab.setOnClickListener(new FabAddSessionClickListener());
-        }
-        else{
-            fab.setOnClickListener(new FabAddEntryClickListener());
-        }
+    //interface implementation for EntriesFragment
+    @Override
+    public void onElementLongClicked(String id) {
+        //launch the dialogfragment to show edit / delete buttons
+        Bundle args = new Bundle();
+        args.putString(EditDeleteDialogFragment.ELEMENT_INTERACTION_ID, id);
+        DialogFragment editDeleteFragment = new EditDeleteDialogFragment();
+        editDeleteFragment.setArguments(args);
+        editDeleteFragment.show(getSupportFragmentManager(), EDIT_DELETE_FRAGMENT_TAG);
+    }
+
+    //interface implementation for EditDeleteDialogFragment
+    @Override
+    public void onEditClicked(String id) {
+        Log.d(TAG, "onEditClicked: you seem to have long clicked element with id " + id);
+    }
+
+    @Override
+    public void onDeleteClicked(String id) {
+        Log.d(TAG, "onDeleteClicked: you seem to have long clicked element with id " + id);
     }
 
     class FabAddEntryClickListener implements View.OnClickListener{

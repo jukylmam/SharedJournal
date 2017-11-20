@@ -2,7 +2,6 @@
     <string name="app_name">SharedJournal</string>
     <string name="title_activity_sessions">SessionsActivity</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string name="number_of_entries_Text">Number of Entries:</string>
@@ -19,4 +18,8 @@
     <string name="add_session_edittext_hint">Session name</string>
     <string name="add_entry_dialog_title">Add new entry</string>
     <string name="add_entry_edittext_hint">Add entry text</string>
+
+    <!-- edit dialog fragment texts -->
+    <string name="dialog_edit_element">Edit</string>
+    <string name="dialog_delete_element">Delete</string>
 </resources>

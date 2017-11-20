@@ -2,6 +2,7 @@ package rtdsd.groupwork.sharedjournal.recyclerViewAdapters;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import rtdsd.groupwork.sharedjournal.EntriesFragment;
 import rtdsd.groupwork.sharedjournal.R;
 import rtdsd.groupwork.sharedjournal.model.Entry;
 import rtdsd.groupwork.sharedjournal.model.Session;
@@ -28,6 +30,13 @@ public class EntriesRecyclerAdapter extends RecyclerView.Adapter<EntriesRecycler
     private final static String DIFF_ENTRY_TITLE = "diffEntryTitle";
 
     private ArrayList<Entry> entries = new ArrayList<>();
+
+    private final EntriesFragment hostFragment;
+
+
+    public EntriesRecyclerAdapter(EntriesFragment host){
+        hostFragment = host;
+    }
 
     @Override
     public void onBindViewHolder(EntriesRecyclerAdapter.ViewHolder holder,
@@ -56,6 +65,13 @@ public class EntriesRecyclerAdapter extends RecyclerView.Adapter<EntriesRecycler
                 @Override
                 public void onClick(View v) {
                     Log.d(TAG, "onClick: entry clicked! ID: " + entry.getId());
+                }
+            });
+            holder.rowView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    hostFragment.elementLongClicked(entry.getId());
+                    return true;
                 }
             });
         }
