@@ -42,7 +42,6 @@ public class JournalSharingFragment extends Fragment implements
         GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleApiClient googleApiClient;
-    private MessageListener messageListener;
 
     private static final String ARG_PARAM1 = "JOURNAL_IDENTIFIER";
     private static final String ARG_PARAM2 = "JOURNAL_TITLE";
@@ -92,6 +91,7 @@ public class JournalSharingFragment extends Fragment implements
         sharingSwitch = v.findViewById(R.id.journal_sharing_switch);
         journalNameField = v.findViewById(R.id.journal_sharing_journal_id);
 
+        journalNameField.setText(this.getArguments().get(ARG_PARAM2).toString());
 
         sharingSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -135,18 +135,7 @@ public class JournalSharingFragment extends Fragment implements
     /**
      * The {@link Message} object used to broadcast information about the device to nearby devices.
      */
-    private Message mPubMessage;
-
-    /**
-     * A {@link MessageListener} for processing messages from nearby devices.
-     */
-    private MessageListener mMessageListener;
-
-    /**
-     * Adapter for working with messages from nearby publishers.
-     */
-    private ArrayAdapter<String> mNearbyDevicesArrayAdapter;
-
+    private Message newMessageToSend;
 
     /**
      * Builds {@link GoogleApiClient}, enabling automatic lifecycle management using
@@ -216,7 +205,7 @@ public class JournalSharingFragment extends Fragment implements
                         }
                     }).build();
 
-            Nearby.Messages.publish(mGoogleApiClient, mPubMessage, options)
+            Nearby.Messages.publish(mGoogleApiClient, newMessageToSend, options)
                     .setResultCallback(new ResultCallback<Status>() {
                         @Override
                         public void onResult(@NonNull Status status) {
@@ -235,7 +224,7 @@ public class JournalSharingFragment extends Fragment implements
      */
     private void unpublish() {
         Log.i(TAG, "Unpublishing.");
-        Nearby.Messages.unpublish(mGoogleApiClient, mPubMessage);
+        Nearby.Messages.unpublish(mGoogleApiClient, newMessageToSend);
     }
 
 }
