@@ -56,6 +56,27 @@ public class JournalSharingFragment extends Fragment implements
     private SwitchCompat sharingSwitch;
     private TextView journalNameField;
 
+    private static final int TTL_IN_SECONDS = 3 * 60; // Three minutes.
+
+    /**
+     * Sets the time in seconds for a published message or a subscription to live. Set to three
+     * minutes in this sample.
+     */
+    private static final Strategy PUB_SUB_STRATEGY = new Strategy.Builder()
+            .setTtlSeconds(TTL_IN_SECONDS).build();
+
+    /**
+     * The entry point to Google Play Services.
+     */
+    private GoogleApiClient mGoogleApiClient;
+
+
+    /**
+     * The {@link Message} object used to broadcast information about the device to nearby devices.
+     */
+    private Message newMessageToSend;
+
+
     private static String getUUID(SharedPreferences sharedPreferences) {
         String uuid = sharedPreferences.getString(KEY_UUID, "");
         if (TextUtils.isEmpty(uuid)) {
@@ -91,8 +112,6 @@ public class JournalSharingFragment extends Fragment implements
         sharingSwitch = v.findViewById(R.id.journal_sharing_switch);
         journalNameField = v.findViewById(R.id.journal_sharing_journal_id);
 
-        journalNameField.setText(this.getArguments().get(ARG_PARAM2).toString());
-
         sharingSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
@@ -115,27 +134,6 @@ public class JournalSharingFragment extends Fragment implements
     public void onDetach() {
         super.onDetach();
     }
-
-
-    private static final int TTL_IN_SECONDS = 3 * 60; // Three minutes.
-
-    /**
-     * Sets the time in seconds for a published message or a subscription to live. Set to three
-     * minutes in this sample.
-     */
-    private static final Strategy PUB_SUB_STRATEGY = new Strategy.Builder()
-            .setTtlSeconds(TTL_IN_SECONDS).build();
-
-    /**
-     * The entry point to Google Play Services.
-     */
-    private GoogleApiClient mGoogleApiClient;
-
-
-    /**
-     * The {@link Message} object used to broadcast information about the device to nearby devices.
-     */
-    private Message newMessageToSend;
 
     /**
      * Builds {@link GoogleApiClient}, enabling automatic lifecycle management using

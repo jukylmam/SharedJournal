@@ -25,10 +25,11 @@ import com.google.android.gms.nearby.messages.SubscribeOptions;
 import java.util.ArrayList;
 import java.util.List;
 
+import rtdsd.groupwork.sharedjournal.BaseActivity;
 import rtdsd.groupwork.sharedjournal.R;
 import rtdsd.groupwork.sharedjournal.model.JournalSharingMessage;
 
-public class JournalScanningActivity extends AppCompatActivity implements
+public class JournalScanningActivity extends BaseActivity implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
