@@ -18,6 +18,8 @@
     <string name="add_session_edittext_hint">Session name</string>
     <string name="add_entry_dialog_title">Add new entry</string>
     <string name="add_entry_edittext_hint">Add entry text</string>
+    <string name="sessions_title">Sessions</string>
+    <string name="entries_title">Entries</string>
 
     <!-- edit dialog fragment texts -->
     <string name="dialog_edit_element">Edit</string>

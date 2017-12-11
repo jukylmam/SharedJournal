@@ -33,6 +33,7 @@ public class SessionsActivity extends BaseActivity implements
     private String journalId;
 
     private FloatingActionButton fab;
+    private Toolbar toolbar;
 
     @IntDef({SESSIONS_FRAGMENT_ACTIVE, ENTRIES_FRAGMENT_ACTIVE})
     public @interface ActiveFragment{}
@@ -47,10 +48,9 @@ public class SessionsActivity extends BaseActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sessions);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         journalId = getIntent().getStringExtra(EXTRA_JOURNAL_ID);
+        activeFragment = ENTRIES_FRAGMENT_ACTIVE;
 
         Log.d(TAG, "onCreate: extra journal id got:" + journalId);
         fab = findViewById(R.id.fab);
@@ -64,6 +64,18 @@ public class SessionsActivity extends BaseActivity implements
         transaction.commit();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        toolbar = findViewById(R.id.toolbar);
+        if(activeFragment == SESSIONS_FRAGMENT_ACTIVE)
+            toolbar.setTitle(getString(R.string.sessions_title));
+        else
+            toolbar.setTitle(getString(R.string.entries_title));
+
+
+        setSupportActionBar(toolbar);
+    }
 
     @Override
     public void entryFragmentDetaching() {
@@ -75,9 +87,15 @@ public class SessionsActivity extends BaseActivity implements
         this.activeFragment = activeFragment;
         if(activeFragment == SESSIONS_FRAGMENT_ACTIVE){
             fab.setOnClickListener(new FabAddSessionClickListener());
+            if(getSupportActionBar() != null) {
+                getSupportActionBar().setTitle(getString(R.string.sessions_title));
+            }
         }
         else{
             fab.setOnClickListener(new FabAddEntryClickListener());
+            if(getSupportActionBar() != null) {
+                getSupportActionBar().setTitle(getString(R.string.entries_title));
+            }
         }
     }
 
