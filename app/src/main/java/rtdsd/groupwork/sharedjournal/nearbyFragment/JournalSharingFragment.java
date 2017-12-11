@@ -63,15 +63,6 @@ public class JournalSharingFragment extends Fragment implements
     private Message newMessageToSend;
 
 
-    private static String getUUID(SharedPreferences sharedPreferences) {
-        String uuid = sharedPreferences.getString(KEY_UUID, "");
-        if (TextUtils.isEmpty(uuid)) {
-            uuid = UUID.randomUUID().toString();
-            sharedPreferences.edit().putString(KEY_UUID, uuid).apply();
-        }
-        return uuid;
-    }
-
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -169,7 +160,6 @@ public class JournalSharingFragment extends Fragment implements
 
     }
 
-
     /**
      * Publishes a message to nearby devices and updates the UI if the publication either fails or
      * TTLs.
@@ -213,6 +203,15 @@ public class JournalSharingFragment extends Fragment implements
     private void unpublish() {
         Log.i(TAG, "Unpublishing.");
         Nearby.Messages.unpublish(googleApiClient, newMessageToSend);
+    }
+
+    private static String getUUID(SharedPreferences sharedPreferences) {
+        String uuid = sharedPreferences.getString(KEY_UUID, "");
+        if (TextUtils.isEmpty(uuid)) {
+            uuid = UUID.randomUUID().toString();
+            sharedPreferences.edit().putString(KEY_UUID, uuid).apply();
+        }
+        return uuid;
     }
 
 }

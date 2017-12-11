@@ -65,6 +65,7 @@ public class SessionsActivity extends BaseActivity implements
                 shareButtonTransaction.replace(R.id.fragmentLayout, sharingFragment);
                 shareButtonTransaction.addToBackStack(null);
                 shareButtonTransaction.commit();
+                dismissEditDeleteFragment();
             }
         });
     }
@@ -98,5 +99,14 @@ public class SessionsActivity extends BaseActivity implements
             addJournalFragment.setArguments(args);
             addJournalFragment.show(getSupportFragmentManager(), ADD_SESSION_FRAGMENT_TAG);
         }
+    }
+
+    private void dismissEditDeleteFragment(){
+        //first find the fragment
+        Fragment editDeleteFragment =
+                getSupportFragmentManager().findFragmentByTag(SESSIONS_FRAGMENT_TAG);
+        //if found, remove it
+        if(editDeleteFragment != null)
+            getSupportFragmentManager().beginTransaction().remove(editDeleteFragment).commit();
     }
 }

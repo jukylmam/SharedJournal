@@ -57,7 +57,8 @@ public class JournalScanningActivity extends BaseActivity implements
                 // Called when a new message is found.
                 Log.d(TAG, "onFound: Message found.");
                 nearbyDevicesArrayAdapter.add(
-                        JournalSharingMessage.fromNearbyMessage(message).getJournalTitle());
+                        JournalSharingMessage.fromNearbyMessage(message).getJournalTitle() + " /// " +
+                                JournalSharingMessage.fromNearbyMessage(message).getJournalIdentifier());
             }
 
             @Override
@@ -65,7 +66,8 @@ public class JournalScanningActivity extends BaseActivity implements
                 // Called when a message is no longer detectable nearby.
                 Log.d(TAG, "onLost: Message lost.");
                 nearbyDevicesArrayAdapter.remove(
-                        JournalSharingMessage.fromNearbyMessage(message).getJournalTitle());
+                        JournalSharingMessage.fromNearbyMessage(message).getJournalTitle() + " /// " +
+                                JournalSharingMessage.fromNearbyMessage(message).getJournalIdentifier());
             }
         };
 
@@ -80,6 +82,7 @@ public class JournalScanningActivity extends BaseActivity implements
                         subscribe();
                     } else {
                         unsubscribe();
+                        nearbyDevicesArrayAdapter.clear();
                     }
                 }
             }
