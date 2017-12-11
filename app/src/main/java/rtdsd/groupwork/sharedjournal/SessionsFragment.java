@@ -34,13 +34,13 @@ public class SessionsFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String JOURNAL_ID_PARAM = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String JOURNAL_TITLE_PARAM = "param2";
 
     private final String TAG = "SessionsFragment";
 
     // TODO: Rename and change types of parameters
     private String journalId;
-    private String mParam2;
+    private String journalTitle;
 
     private OnSessionsFragmentInteractionListener mListener;
 
@@ -56,15 +56,15 @@ public class SessionsFragment extends Fragment {
      * this fragment using the provided parameters.
      *
      * @param journalId Parameter 1.
-     * @param param2 Parameter 2.
+     * @param journalTitle Parameter 2.
      * @return A new instance of fragment SessionsFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static SessionsFragment newInstance(String journalId, String param2) {
+    public static SessionsFragment newInstance(String journalId, String journalTitle) {
         SessionsFragment fragment = new SessionsFragment();
         Bundle args = new Bundle();
         args.putString(JOURNAL_ID_PARAM, journalId);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(JOURNAL_TITLE_PARAM, journalTitle);
         fragment.setArguments(args);
         return fragment;
     }
@@ -74,8 +74,12 @@ public class SessionsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             journalId = getArguments().getString(JOURNAL_ID_PARAM);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            journalTitle = getArguments().getString(JOURNAL_TITLE_PARAM);
         }
+
+        Log.d(TAG, "onCreate: extra journal id got:" + journalId);
+        Log.d(TAG, "onCreate: extra journal title got:" + journalTitle);
+
         fireBaseCommunication = new FireBaseSessionCommunication();
     }
 

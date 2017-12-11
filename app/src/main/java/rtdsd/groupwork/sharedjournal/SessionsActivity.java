@@ -12,14 +12,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import rtdsd.groupwork.sharedjournal.nearbyFragment.JournalSharingFragment;
-
 import rtdsd.groupwork.sharedjournal.DialogFragments.AddElementDialogFragment;
 import rtdsd.groupwork.sharedjournal.DialogFragments.BaseAppDialogFragment;
 import rtdsd.groupwork.sharedjournal.DialogFragments.EditDeleteDialogFragment;
 import rtdsd.groupwork.sharedjournal.DialogFragments.EditEntryFragment;
 import rtdsd.groupwork.sharedjournal.model.Entry;
 import rtdsd.groupwork.sharedjournal.model.Session;
+import rtdsd.groupwork.sharedjournal.nearbyFragment.JournalSharingFragment;
 import rtdsd.groupwork.sharedjournal.viewmodel.FireBaseEntryCommunication;
 
 public class SessionsActivity extends BaseActivity implements
@@ -31,6 +30,7 @@ public class SessionsActivity extends BaseActivity implements
 
     private final String TAG = "SessionsActivity";
     public static final String EXTRA_JOURNAL_ID = "journalId";
+    public static final String EXTRA_JOURNAL_TITLE = "journalTitle";
 
     private static final String SESSIONS_FRAGMENT_TAG = "sessionsFragment";
     private static final String ENTRIES_FRAGMENT_TAG = "entriesFragment";
@@ -40,6 +40,7 @@ public class SessionsActivity extends BaseActivity implements
     private static final String EDIT_ENTRY_FRAGMENT_TAG = "editEntryFragmentTag";
 
     private String journalId;
+    private String journalTitle;
     private Button shareJournalButton;
 
     private FloatingActionButton fab;
@@ -62,6 +63,11 @@ public class SessionsActivity extends BaseActivity implements
         shareJournalButton = findViewById(R.id.journal_share_button);
 
         journalId = getIntent().getStringExtra(EXTRA_JOURNAL_ID);
+        journalTitle = getIntent().getStringExtra(EXTRA_JOURNAL_TITLE);
+
+        Log.d(TAG, "onCreate: extra journal id got:" + journalId);
+        Log.d(TAG, "onCreate: extra journal title got:" + journalTitle);
+
         activeFragment = ENTRIES_FRAGMENT_ACTIVE;
 
         Log.d(TAG, "onCreate: extra journal id got:" + journalId);
@@ -71,7 +77,7 @@ public class SessionsActivity extends BaseActivity implements
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
 
-        SessionsFragment sessionsFragment = SessionsFragment.newInstance(journalId,"");
+        SessionsFragment sessionsFragment = SessionsFragment.newInstance(journalId, journalTitle);
         transaction.add(R.id.fragmentLayout, sessionsFragment, SESSIONS_FRAGMENT_TAG);
         transaction.commit();
 
@@ -79,11 +85,12 @@ public class SessionsActivity extends BaseActivity implements
         shareJournalButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Fragment sharingFragment = new JournalSharingFragment();
+                Fragment sharingFragment = JournalSharingFragment.newInstance(journalId, journalTitle);
                 FragmentTransaction shareButtonTransaction = getSupportFragmentManager().beginTransaction();
                 shareButtonTransaction.replace(R.id.fragmentLayout, sharingFragment);
                 shareButtonTransaction.addToBackStack(null);
                 shareButtonTransaction.commit();
+                dismissEditDeleteFragment();
             }
         });
     }

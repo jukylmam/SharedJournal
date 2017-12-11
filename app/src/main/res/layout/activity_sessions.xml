@@ -21,7 +21,7 @@
             android:id="@+id/journal_share_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/share_journal"/>
+            android:text="@string/share_journal_button"/>
     </android.support.design.widget.AppBarLayout>
 
 

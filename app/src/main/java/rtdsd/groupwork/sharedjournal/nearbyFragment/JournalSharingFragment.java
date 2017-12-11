@@ -1,109 +1,217 @@
 package rtdsd.groupwork.sharedjournal.nearbyFragment;
 
 import android.content.Context;
-import android.net.Uri;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SwitchCompat;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
+import android.widget.TextView;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.nearby.Nearby;
+import com.google.android.gms.nearby.messages.Message;
+import com.google.android.gms.nearby.messages.MessageListener;
+import com.google.android.gms.nearby.messages.PublishCallback;
+import com.google.android.gms.nearby.messages.PublishOptions;
+import com.google.android.gms.nearby.messages.Strategy;
+
+import java.util.UUID;
 
 import rtdsd.groupwork.sharedjournal.R;
+import rtdsd.groupwork.sharedjournal.model.JournalSharingMessage;
 
 /**
  * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link JournalSharingFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
  * Use the {@link JournalSharingFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class JournalSharingFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+public class JournalSharingFragment extends Fragment implements
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private static final String KEY_UUID = "key_uuid";
+    private static final int TTL_IN_SECONDS = 3 * 60; // Three minutes.
+    /**
+     * Sets the time in seconds for a published message or a subscription to live. Set to three
+     * minutes in this sample.
+     */
+    private static final Strategy PUB_SUB_STRATEGY = new Strategy.Builder()
+            .setTtlSeconds(TTL_IN_SECONDS).build();
+    private final String TAG = "JournalSharingActivity";
+    private GoogleApiClient googleApiClient;
+    private String journalId;
+    private String journalTitle;
+    private SwitchCompat sharingSwitch;
+    private TextView journalNameField;
+    /**
+     * The {@link Message} object used to broadcast information about the device to nearby devices.
+     */
+    private Message newMessageToSend;
 
-    private OnFragmentInteractionListener mListener;
-
-    public JournalSharingFragment() {
-        // Required empty public constructor
-    }
 
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     * @param journalId ID of the current journal
      * @return A new instance of fragment JournalSharingFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static JournalSharingFragment newInstance(String param1, String param2) {
+    public static JournalSharingFragment newInstance(String journalId, String journalTitle) {
         JournalSharingFragment fragment = new JournalSharingFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
+        fragment.journalId = journalId;
+        fragment.journalTitle = journalTitle;
         return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_journal_sharing, container, false);
-    }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
+        View v = inflater.inflate(R.layout.fragment_journal_sharing, container, false);
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnDialogFragmentInteraction");
-        }
+        sharingSwitch = v.findViewById(R.id.journal_sharing_switch);
+        journalNameField = v.findViewById(R.id.journal_sharing_journal_id);
+        journalNameField.setText(journalTitle);
+
+        Log.d(TAG,"Journal id: " + journalId + " Journal title: " + journalTitle);
+
+        newMessageToSend = JournalSharingMessage.newNearbyMessage(getUUID(getContext().getSharedPreferences(
+        getActivity().getApplicationContext().getPackageName(), Context.MODE_PRIVATE)), journalId, journalTitle);
+
+        sharingSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if (googleApiClient != null && googleApiClient.isConnected()) {
+                    if (isChecked) {
+                        publish();
+                    } else {
+                        unpublish();
+                    }
+                }
+            }
+        });
+
+        buildGoogleApiClient();
+
+        return v;
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
 
     /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
+     * Builds {@link GoogleApiClient}, enabling automatic lifecycle management using
+     * {@link GoogleApiClient.Builder#enableAutoManage(FragmentActivity,
+     * int, GoogleApiClient.OnConnectionFailedListener)}. I.e., GoogleApiClient connects in
+     * {@link AppCompatActivity#onStart}, or if onStart() has already happened, it connects
+     * immediately, and disconnects automatically in {@link AppCompatActivity#onStop}.
      */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+    private void buildGoogleApiClient() {
+        if (googleApiClient != null) {
+            return;
+        }
+        googleApiClient = new GoogleApiClient.Builder(getActivity())
+                .addApi(Nearby.MESSAGES_API)
+                .enableAutoManage(getActivity(),this)
+                .addConnectionCallbacks(this)
+                .build();
     }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        sharingSwitch.setEnabled(false);
+        Log.d(TAG,"Exception while connecting to Google Play services: " +
+                connectionResult.getErrorMessage());
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        Log.d(TAG, "Connection suspended. Error code: " + i);
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        Log.i(TAG, "GoogleApiClient connected");
+        // We use the Switch buttons in the UI to track whether we were previously doing pub/sub (
+        // switch buttons retain state on orientation change). Since the GoogleApiClient disconnects
+        // when the activity is destroyed, foreground pubs/subs do not survive device rotation. Once
+        // this activity is re-created and GoogleApiClient connects, we check the UI and pub/sub
+        // again if necessary.
+        if (sharingSwitch.isChecked()) {
+            publish();
+        }
+
+    }
+
+    /**
+     * Publishes a message to nearby devices and updates the UI if the publication either fails or
+     * TTLs.
+     */
+    private void publish() {
+        if(journalId != null){
+            Log.i(TAG, "Publishing");
+            PublishOptions options = new PublishOptions.Builder()
+                    .setStrategy(PUB_SUB_STRATEGY)
+                    .setCallback(new PublishCallback() {
+                        @Override
+                        public void onExpired() {
+                            super.onExpired();
+                            Log.i(TAG, "No longer publishing");
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    sharingSwitch.setChecked(false);
+                                }
+                            });
+                        }
+                    }).build();
+
+            Nearby.Messages.publish(googleApiClient, newMessageToSend, options)
+                    .setResultCallback(new ResultCallback<Status>() {
+                        @Override
+                        public void onResult(@NonNull Status status) {
+                            if (status.isSuccess()) {
+                                Log.i(TAG, "Published successfully.");
+                            } else {
+                                sharingSwitch.setChecked(false);
+                            }
+                        }
+                    });
+        }
+    }
+
+    /**
+     * Stops publishing message to nearby devices.
+     */
+    private void unpublish() {
+        Log.i(TAG, "Unpublishing.");
+        Nearby.Messages.unpublish(googleApiClient, newMessageToSend);
+    }
+
+    private static String getUUID(SharedPreferences sharedPreferences) {
+        String uuid = sharedPreferences.getString(KEY_UUID, "");
+        if (TextUtils.isEmpty(uuid)) {
+            uuid = UUID.randomUUID().toString();
+            sharedPreferences.edit().putString(KEY_UUID, uuid).apply();
+        }
+        return uuid;
+    }
+
 }

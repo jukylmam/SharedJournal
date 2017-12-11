@@ -2,11 +2,11 @@ package rtdsd.groupwork.sharedjournal;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import rtdsd.groupwork.sharedjournal.DialogFragments.AddElementDialogFragment;
 import rtdsd.groupwork.sharedjournal.DialogFragments.BaseAppDialogFragment;
 import rtdsd.groupwork.sharedjournal.model.RpgJournal;
+import rtdsd.groupwork.sharedjournal.nearbyFragment.JournalScanningActivity;
+import rtdsd.groupwork.sharedjournal.nearbyFragment.JournalSharingFragment;
 import rtdsd.groupwork.sharedjournal.recyclerViewAdapters.JournalsRecyclerAdapter;
 import rtdsd.groupwork.sharedjournal.viewmodel.FireBaseJournalCommunication;
 import rtdsd.groupwork.sharedjournal.viewmodel.JournalViewModel;
@@ -89,6 +91,8 @@ public class MainActivity extends BaseActivity
         if(item.getItemId() == R.id.scan_journals){
             Log.d(TAG, "onOptionsItemSelected: should open scan journals stuff now");
             // TODO: 11/2/17 add open scan stuff here Niko
+            Intent i = new Intent(this, JournalScanningActivity.class);
+            startActivity(i);
 
             return true;
         }

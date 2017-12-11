@@ -9,7 +9,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <meta-data
             android:name="com.google.android.nearby.messages.API_KEY"
             android:value="AIzaSyDErE-YCoTSQsRjwc5NZTVZ3irdwgWPqss" />
@@ -24,7 +23,8 @@
         <activity
             android:name=".SessionsActivity"
             android:label="@string/title_activity_sessions"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".nearbyFragment.JournalScanningActivity"></activity>
     </application>
 
 </manifest>
