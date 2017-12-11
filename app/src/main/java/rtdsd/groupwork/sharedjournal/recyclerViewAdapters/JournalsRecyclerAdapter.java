@@ -129,7 +129,6 @@ public class JournalsRecyclerAdapter extends RecyclerView.Adapter<JournalsRecycl
                 i.putExtra(SessionsActivity.EXTRA_JOURNAL_ID, journal.getId());
                 i.putExtra(SessionsActivity.EXTRA_JOURNAL_TITLE, journal.getName());
                 view.getContext().startActivity(i);
-
             }
         });
     }

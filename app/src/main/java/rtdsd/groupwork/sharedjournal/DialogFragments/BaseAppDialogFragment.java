@@ -1,9 +1,6 @@
 package rtdsd.groupwork.sharedjournal.DialogFragments;
 
-import android.app.Dialog;
 import android.content.Context;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
 
@@ -30,14 +27,14 @@ public class BaseAppDialogFragment extends DialogFragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnDialogFragmentInteraction {
-        void onDialogOkButtonClicked(String editTextContents);
+        void onBaseAppDialogOkButtonClicked(String editTextContents);
     }
 
 
     public void onOkButtonPressed(String editTextContents) {
         if (mListener != null) {
             Log.d(TAG, "onOkButtonPressed: ok clicked, journal name is " + editTextContents);
-            mListener.onDialogOkButtonClicked(editTextContents);
+            mListener.onBaseAppDialogOkButtonClicked(editTextContents);
         }
     }
 

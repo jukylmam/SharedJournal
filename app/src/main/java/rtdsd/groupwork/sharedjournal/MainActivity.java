@@ -118,8 +118,8 @@ public class MainActivity extends BaseActivity
 
     //called when OK is clicked in the set journal name fragment
     @Override
-    public void onDialogOkButtonClicked(String editTextContents) {
-        Log.d(TAG, "onDialogOkButtonClicked: mainactivity got journal name:" + editTextContents);
+    public void onBaseAppDialogOkButtonClicked(String editTextContents) {
+        Log.d(TAG, "onBaseAppDialogOkButtonClicked: mainactivity got journal name:" + editTextContents);
         firebaseJournalReference.addJournal(editTextContents);
     }
 }

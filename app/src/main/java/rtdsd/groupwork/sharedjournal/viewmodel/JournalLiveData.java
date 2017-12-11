@@ -35,59 +35,7 @@ class JournalLiveData extends LiveData<ArrayList<RpgJournal>> {
     public JournalLiveData(Context context) {
         this.context = context;
 
-        childEventListener = new ChildEventListener() {
-
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                //here we get singular Journal entries, this will be called multiple times, once per each entry
-                RpgJournal journal = getJournalFromSnapshot(dataSnapshot);
-                ArrayList<RpgJournal> journals = getValue();
-                if(journals == null) {
-                    Log.d(TAG, "error adding entry to journals, getValue() returned null. " +
-                            "Creating new 'journals'");
-                    journals = new ArrayList<>();
-                }
-                if(journals.contains(journal)){
-                    journals.remove(journal);
-                }
-                journals.add(journal);
-                //set value for this LiveData object - model will know stuff has changed
-                //and call observers' onChanged method with the new data
-                setValue(journals);
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                RpgJournal journal = getJournalFromSnapshot(dataSnapshot);
-
-                ArrayList<RpgJournal> journals = getValue();
-                if(journals != null){
-                    journals.remove(journal);
-                }
-                setValue(journals);
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                RpgJournal journal = getJournalFromSnapshot(dataSnapshot);
-                ArrayList<RpgJournal> journals = getValue();
-                if (journals != null) {
-                    journals.get(journals.indexOf(journal)).updateValues(journal);
-                    setValue(journals);
-                }
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.d(TAG, "onCancelled");
-            }
-        };
+        childEventListener = new JournalsListener();
         database = FirebaseDatabase.getInstance();
     }
 
@@ -112,5 +60,59 @@ class JournalLiveData extends LiveData<ArrayList<RpgJournal>> {
     protected void onInactive() {
         DatabaseReference reference = database.getReference("journals");
         reference.removeEventListener(childEventListener);
+    }
+
+    private class JournalsListener implements ChildEventListener {
+
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            //here we get singular Journal entries, this will be called multiple times, once per each entry
+            RpgJournal journal = getJournalFromSnapshot(dataSnapshot);
+            ArrayList<RpgJournal> journals = getValue();
+            if(journals == null) {
+                Log.d(TAG, "error adding entry to journals, getValue() returned null. " +
+                        "Creating new 'journals'");
+                journals = new ArrayList<>();
+            }
+            if(journals.contains(journal)){
+                journals.remove(journal);
+            }
+            journals.add(journal);
+            //set value for this LiveData object - model will know stuff has changed
+            //and call observers' onChanged method with the new data
+            setValue(journals);
+        }
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+            RpgJournal journal = getJournalFromSnapshot(dataSnapshot);
+
+            ArrayList<RpgJournal> journals = getValue();
+            if(journals != null){
+                journals.remove(journal);
+            }
+            setValue(journals);
+        }
+
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            RpgJournal journal = getJournalFromSnapshot(dataSnapshot);
+            ArrayList<RpgJournal> journals = getValue();
+            if (journals != null) {
+                journals.get(journals.indexOf(journal)).updateValues(journal);
+                setValue(journals);
+            }
+
+        }
+
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+            Log.d(TAG, "onCancelled");
+        }
     }
 }

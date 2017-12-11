@@ -25,7 +25,7 @@ import rtdsd.groupwork.sharedjournal.viewmodel.SessionsViewModelFactory;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link SessionsFragment.OnFragmentInteractionListener} interface
+ * {@link OnSessionsFragmentInteractionListener} interface
  * to handle interaction events.
  * Use the {@link SessionsFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -42,7 +42,7 @@ public class SessionsFragment extends Fragment {
     private String journalId;
     private String journalTitle;
 
-    private OnFragmentInteractionListener mListener;
+    private OnSessionsFragmentInteractionListener mListener;
 
     SessionsViewModel model;
     FireBaseSessionCommunication fireBaseCommunication;
@@ -124,8 +124,8 @@ public class SessionsFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof OnSessionsFragmentInteractionListener) {
+            mListener = (OnSessionsFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnDialogFragmentInteraction");
@@ -153,7 +153,7 @@ public class SessionsFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
+    public interface OnSessionsFragmentInteractionListener {
         void openSession(Session session);
     }
 }
