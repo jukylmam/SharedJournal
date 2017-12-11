@@ -71,8 +71,11 @@ public class JournalScanningActivity extends BaseActivity implements
             }
         };
 
-        scanningTitle = findViewById(R.id.journal_sharing_header_text);
+        scanningTitle = findViewById(R.id.journal_scanning_header_text);
         scanningSwitch = findViewById(R.id.journal_scanning_switch);
+
+
+        scanningTitle.setText(R.string.scan_journal_header);
 
         scanningSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

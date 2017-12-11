@@ -21,4 +21,6 @@
     <string name="share_journal_button">Share Journal</string>
     <string name="share_journal_switch">Share journal</string>
     <string name="scan_journal_switch">Scan for nearby journals</string>
+    <string name="scan_journal_header">Find nearby journals</string>
+
 </resources>
