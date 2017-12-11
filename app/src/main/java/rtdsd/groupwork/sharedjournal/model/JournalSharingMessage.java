@@ -11,7 +11,7 @@ public class JournalSharingMessage {
     private static final Gson gson = new Gson();
 
     private final String uuid;
-    private final String messageContent;
+    private final String journalIdentifier;
     private final String messageJournalTitle;
 
     public static Message newNearbyMessage(String newMessageIdentifier, String newMessageContent, String newJournalTitle){
@@ -19,14 +19,14 @@ public class JournalSharingMessage {
         return new Message(gson.toJson(jSharingMessage).getBytes(Charset.forName("UTF-8")));
     }
 
-    private JournalSharingMessage(String messageId, String messageContent, String journalTitle){
+    private JournalSharingMessage(String messageId, String journalIdentifier, String journalTitle){
         this.uuid = messageId;
-        this.messageContent = messageContent;
+        this.journalIdentifier = journalIdentifier;
         this.messageJournalTitle = journalTitle;
     }
 
     public String getContent() {
-        return messageContent;
+        return journalIdentifier;
     }
     public String getTitle() {
         return messageJournalTitle;
@@ -43,8 +43,8 @@ public class JournalSharingMessage {
         return messageJournalTitle;
     }
 
-    public String getMessageContent() {
-        return messageContent;
+    public String getJournalIdentifier() {
+        return journalIdentifier;
     }
 
 }

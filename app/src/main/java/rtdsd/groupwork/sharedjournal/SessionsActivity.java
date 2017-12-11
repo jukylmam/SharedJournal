@@ -44,6 +44,8 @@ public class SessionsActivity extends BaseActivity implements
         journalTitle = getIntent().getStringExtra(EXTRA_JOURNAL_TITLE);
 
         Log.d(TAG, "onCreate: extra journal id got:" + journalId);
+        Log.d(TAG, "onCreate: extra journal title got:" + journalTitle);
+
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new FabSessionsOnClickListener());
 

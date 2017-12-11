@@ -1,5 +1,6 @@
 package rtdsd.groupwork.sharedjournal.nearbyFragment;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -31,6 +32,7 @@ import com.google.android.gms.nearby.messages.Strategy;
 import java.util.UUID;
 
 import rtdsd.groupwork.sharedjournal.R;
+import rtdsd.groupwork.sharedjournal.model.JournalSharingMessage;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -41,36 +43,20 @@ public class JournalSharingFragment extends Fragment implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
-    private GoogleApiClient googleApiClient;
-
-    private static final String ARG_PARAM1 = "JOURNAL_IDENTIFIER";
-    private static final String ARG_PARAM2 = "JOURNAL_TITLE";
-
     private static final String KEY_UUID = "key_uuid";
-
-    private final String TAG = "JournalSharingActivity";
-
-    private String journalId;
-    private String journalTitle;
-
-    private SwitchCompat sharingSwitch;
-    private TextView journalNameField;
-
     private static final int TTL_IN_SECONDS = 3 * 60; // Three minutes.
-
     /**
      * Sets the time in seconds for a published message or a subscription to live. Set to three
      * minutes in this sample.
      */
     private static final Strategy PUB_SUB_STRATEGY = new Strategy.Builder()
             .setTtlSeconds(TTL_IN_SECONDS).build();
-
-    /**
-     * The entry point to Google Play Services.
-     */
-    private GoogleApiClient mGoogleApiClient;
-
-
+    private final String TAG = "JournalSharingActivity";
+    private GoogleApiClient googleApiClient;
+    private String journalId;
+    private String journalTitle;
+    private SwitchCompat sharingSwitch;
+    private TextView journalNameField;
     /**
      * The {@link Message} object used to broadcast information about the device to nearby devices.
      */
@@ -96,10 +82,8 @@ public class JournalSharingFragment extends Fragment implements
     // TODO: Rename and change types and number of parameters
     public static JournalSharingFragment newInstance(String journalId, String journalTitle) {
         JournalSharingFragment fragment = new JournalSharingFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, journalId);
-        args.putString(ARG_PARAM2, journalTitle);
-        fragment.setArguments(args);
+        fragment.journalId = journalId;
+        fragment.journalTitle = journalTitle;
         return fragment;
     }
 
@@ -111,6 +95,12 @@ public class JournalSharingFragment extends Fragment implements
 
         sharingSwitch = v.findViewById(R.id.journal_sharing_switch);
         journalNameField = v.findViewById(R.id.journal_sharing_journal_id);
+        journalNameField.setText(journalTitle);
+
+        Log.d(TAG,"Journal id: " + journalId + " Journal title: " + journalTitle);
+
+        newMessageToSend = JournalSharingMessage.newNearbyMessage(getUUID(getContext().getSharedPreferences(
+        getActivity().getApplicationContext().getPackageName(), Context.MODE_PRIVATE)), journalId, journalTitle);
 
         sharingSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -143,13 +133,13 @@ public class JournalSharingFragment extends Fragment implements
      * immediately, and disconnects automatically in {@link AppCompatActivity#onStop}.
      */
     private void buildGoogleApiClient() {
-        if (mGoogleApiClient != null) {
+        if (googleApiClient != null) {
             return;
         }
-        mGoogleApiClient = new GoogleApiClient.Builder(getContext())
+        googleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addApi(Nearby.MESSAGES_API)
+                .enableAutoManage(getActivity(),this)
                 .addConnectionCallbacks(this)
-                .enableAutoManage(getActivity(), this)
                 .build();
     }
 
@@ -203,7 +193,7 @@ public class JournalSharingFragment extends Fragment implements
                         }
                     }).build();
 
-            Nearby.Messages.publish(mGoogleApiClient, newMessageToSend, options)
+            Nearby.Messages.publish(googleApiClient, newMessageToSend, options)
                     .setResultCallback(new ResultCallback<Status>() {
                         @Override
                         public void onResult(@NonNull Status status) {
@@ -222,7 +212,7 @@ public class JournalSharingFragment extends Fragment implements
      */
     private void unpublish() {
         Log.i(TAG, "Unpublishing.");
-        Nearby.Messages.unpublish(mGoogleApiClient, newMessageToSend);
+        Nearby.Messages.unpublish(googleApiClient, newMessageToSend);
     }
 
 }

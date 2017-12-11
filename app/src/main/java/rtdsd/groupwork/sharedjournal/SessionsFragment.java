@@ -76,6 +76,10 @@ public class SessionsFragment extends Fragment {
             journalId = getArguments().getString(JOURNAL_ID_PARAM);
             journalTitle = getArguments().getString(JOURNAL_TITLE_PARAM);
         }
+
+        Log.d(TAG, "onCreate: extra journal id got:" + journalId);
+        Log.d(TAG, "onCreate: extra journal title got:" + journalTitle);
+
         fireBaseCommunication = new FireBaseSessionCommunication();
     }
 

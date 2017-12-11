@@ -127,6 +127,7 @@ public class JournalsRecyclerAdapter extends RecyclerView.Adapter<JournalsRecycl
                 Log.d(TAG, "row with text: " + journal.getName() + " clicked");
                 Intent i = new Intent(view.getContext(), SessionsActivity.class);
                 i.putExtra(SessionsActivity.EXTRA_JOURNAL_ID, journal.getId());
+                i.putExtra(SessionsActivity.EXTRA_JOURNAL_TITLE, journal.getName());
                 view.getContext().startActivity(i);
 
             }
