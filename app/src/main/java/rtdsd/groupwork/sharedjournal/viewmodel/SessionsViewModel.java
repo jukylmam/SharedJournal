@@ -16,9 +16,10 @@ public class SessionsViewModel extends AndroidViewModel{
 
     private final SessionsLiveData liveData;
 
-    public SessionsViewModel(Application application){
+
+    SessionsViewModel(Application application, String journalId){
         super(application);
-        liveData = new SessionsLiveData(application);
+        liveData = new SessionsLiveData(application, journalId);
     }
 
     public LiveData<ArrayList<Session>> getData(){
