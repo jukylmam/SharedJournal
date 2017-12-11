@@ -38,17 +38,31 @@ public class EntriesRecyclerAdapter extends RecyclerView.Adapter<EntriesRecycler
         hostFragment = host;
     }
 
+    public Entry getEntryById(String id){
+        for(Entry entry : entries){
+            if(entry.getId().equals(id))
+                return entry;
+        }
+        return null;
+    }
+
+    public void updateEntry(Entry modifiedEntry) {
+        notifyItemChanged(entries.indexOf(modifiedEntry));
+    }
+
     @Override
     public void onBindViewHolder(EntriesRecyclerAdapter.ViewHolder holder,
                                  int position, List<Object> payloads) {
 
 
         if(!payloads.isEmpty()){
+            Log.d(TAG, "onBindViewHolder: payload not empty, something changed");
             //get the bundle, it's the first element in payloads, this from official docs
             Bundle bundle = (Bundle) payloads.get(0);
 
             //iterate through the changed things in the bundle
             for(String key : bundle.keySet()){
+                Log.d(TAG, "onBindViewHolder: key being looked at" + key);
                 if(key.equals(DIFF_ENTRY_BODY)){
                     holder.bodyView.setText(bundle.getString(key));
                 }
@@ -58,6 +72,7 @@ public class EntriesRecyclerAdapter extends RecyclerView.Adapter<EntriesRecycler
             }
         }
         else{
+            Log.d(TAG, "onBindViewHolder: payloads is empty");
             final Entry entry = entries.get(position);
             holder.titleView.setText(entry.getEntryTitle());
             holder.bodyView.setText(entry.getEntryBody());
@@ -70,7 +85,7 @@ public class EntriesRecyclerAdapter extends RecyclerView.Adapter<EntriesRecycler
             holder.rowView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    hostFragment.elementLongClicked(entry.getId());
+                    hostFragment.elementLongClicked(entry);
                     return true;
                 }
             });
@@ -131,6 +146,7 @@ public class EntriesRecyclerAdapter extends RecyclerView.Adapter<EntriesRecycler
                 Entry newItem = newEntries.get(newItemPosition);
                 /*Log.d(TAG, "areContentsTheSame: old session title: " + oldItem.getTitle() +
                         " new session title: " + newItem.getTitle());*/
+                Log.d(TAG, "areContentsTheSame: " + oldItem.areContentsSame(newItem));
                 return oldItem.areContentsSame(newItem);
             }
 
@@ -171,6 +187,8 @@ public class EntriesRecyclerAdapter extends RecyclerView.Adapter<EntriesRecycler
         }
         result.dispatchUpdatesTo(this);
     }
+
+
 
     class ViewHolder extends RecyclerView.ViewHolder{
 

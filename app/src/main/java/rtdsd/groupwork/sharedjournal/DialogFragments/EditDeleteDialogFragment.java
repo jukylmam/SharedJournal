@@ -20,6 +20,8 @@ public class EditDeleteDialogFragment extends DialogFragment {
 
     private onEditDeleteFragmentInteraction mListener;
     public static final String ELEMENT_INTERACTION_ID = "elementInteractionId";
+    public static final String ELEMENT_INTERACTION_TITLE = "elementInteractionTitle";
+    public static final String ELEMENT_INTERACTION_BODY = "elementInteractionBody";
 
     @NonNull
     @Override
@@ -34,12 +36,14 @@ public class EditDeleteDialogFragment extends DialogFragment {
             View dialogLayout = inflater.inflate(R.layout.dialogfragment_edit_element, null);
 
             final String elementId = getArguments().getString(ELEMENT_INTERACTION_ID);
+            final String elementTitle = getArguments().getString(ELEMENT_INTERACTION_TITLE);
+            final String elementBody = getArguments().getString(ELEMENT_INTERACTION_BODY);
 
             Button editButton = dialogLayout.findViewById(R.id.dialogfragment_edit_element);
             editButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mListener.onEditClicked(elementId);
+                    mListener.onEditEntryClicked(elementId, elementTitle, elementBody);
                 }
             });
 
@@ -47,7 +51,7 @@ public class EditDeleteDialogFragment extends DialogFragment {
             deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mListener.onDeleteClicked(elementId);
+                    mListener.onDeleteEntryClicked(elementId);
                 }
             });
 
@@ -82,8 +86,8 @@ public class EditDeleteDialogFragment extends DialogFragment {
      * the activity where it's hosted
      */
     public interface onEditDeleteFragmentInteraction{
-        void onEditClicked(String id);
-        void onDeleteClicked(String id);
+        void onEditEntryClicked(String id, String title, String body);
+        void onDeleteEntryClicked(String id);
     }
 
 }

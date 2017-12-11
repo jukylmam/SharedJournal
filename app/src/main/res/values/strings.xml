@@ -21,7 +21,13 @@
     <string name="sessions_title">Sessions</string>
     <string name="entries_title">Entries</string>
 
-    <!-- edit dialog fragment texts -->
+    <!-- edit/delete dialog fragment texts -->
     <string name="dialog_edit_element">Edit</string>
     <string name="dialog_delete_element">Delete</string>
+
+    <!-- edit dialog fragment texts -->
+    <string name="edit_entry_dialog_title">Edit entry</string>
+    <string name="edit_entry_dialog_title_hint">Title</string>
+    <string name="edit_entry_dialog_body_hint">Body</string>
+
 </resources>

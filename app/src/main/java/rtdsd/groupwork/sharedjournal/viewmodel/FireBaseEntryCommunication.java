@@ -14,12 +14,15 @@ public class FireBaseEntryCommunication {
     DatabaseReference databaseReference;
     private final String DB_REF_ENTRIES = "entries";
 
-    public FireBaseEntryCommunication(String entryId){
+
+    public FireBaseEntryCommunication(String sessionId){
+        //the database reference to entries - sessionId
+        //the entries are saved under the session ID
         this.databaseReference =
                 FirebaseDatabase.getInstance()
                         .getReference()
                         .child(DB_REF_ENTRIES)
-                        .child(entryId);
+                        .child(sessionId);
     }
 
     public void addEntry(String entryTitle, String entryBody){
@@ -30,5 +33,15 @@ public class FireBaseEntryCommunication {
         String key = databaseReference.push().getKey();
         entry.setId(key);
         databaseReference.child(key).setValue(entry);
+    }
+
+    public void editEntry(Entry entry){
+            //save the entry to firebase over the old entry
+            databaseReference.child(entry.getId()).setValue(entry);
+
+    }
+
+    public void deleteEntry(String entryId) {
+        databaseReference.child(entryId).setValue(null);
     }
 }

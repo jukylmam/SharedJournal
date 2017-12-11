@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
-import rtdsd.groupwork.sharedjournal.DialogFragments.EditDeleteDialogFragment;
 import rtdsd.groupwork.sharedjournal.model.Entry;
 import rtdsd.groupwork.sharedjournal.recyclerViewAdapters.EntriesRecyclerAdapter;
 import rtdsd.groupwork.sharedjournal.viewmodel.EntriesViewModel;
@@ -33,9 +32,9 @@ import rtdsd.groupwork.sharedjournal.viewmodel.FireBaseEntryCommunication;
  */
 public class EntriesFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_ENTRY_ID = "entryIdParam";
+    private static final String ARG_SESSION_ID = "entryIdParam";
 
-    private String entryId;
+    private String sessionId;
 
     private FireBaseEntryCommunication fireBaseEntryCommunication;
 
@@ -51,25 +50,40 @@ public class EntriesFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param entryId Parameter 1.
+     * @param sessionId ID of the entry that was opened previously
      * @return A new instance of fragment EntriesFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static EntriesFragment newInstance(String entryId) {
+    public static EntriesFragment newInstance(String sessionId) {
         EntriesFragment fragment = new EntriesFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_ENTRY_ID, entryId);
+        args.putString(ARG_SESSION_ID, sessionId);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    public Entry getEntryById(String id){
+        if(adapter!= null){
+            return adapter.getEntryById(id);
+        }
+        else
+            return null;
+    }
+
+    public void entryChanged(Entry entry) {
+        adapter.updateEntry(entry);
+    }
+
+    public FireBaseEntryCommunication getFirebaseInstance(){
+        return fireBaseEntryCommunication;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            entryId = getArguments().getString(ARG_ENTRY_ID);
+            sessionId = getArguments().getString(ARG_SESSION_ID);
         }
-        fireBaseEntryCommunication = new FireBaseEntryCommunication(entryId);
+        fireBaseEntryCommunication = new FireBaseEntryCommunication(sessionId);
     }
 
     @Override
@@ -90,7 +104,7 @@ public class EntriesFragment extends Fragment {
 
         //observe the data
         EntriesViewModel model = ViewModelProviders.of(this, new EntriesViewModelFactory(
-                this.getActivity().getApplication(), entryId))
+                this.getActivity().getApplication(), sessionId))
                 .get(EntriesViewModel.class);
 
         model.getData().observe(this, new Observer<ArrayList<Entry>>() {
@@ -136,23 +150,21 @@ public class EntriesFragment extends Fragment {
         fireBaseEntryCommunication.addEntry(entryTitle, entryBody);
     }
 
-    public void elementLongClicked(String id) {
+    public void elementLongClicked(Entry entry) {
         //just pass the call to the activity
-        mListener.onElementLongClicked(id);
+        mListener.onElementLongClicked(entry);
     }
+
+
 
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnEntriesFragmentInteractionListener {
         void entryFragmentDetaching();
-        void onElementLongClicked(String id);
+        void onElementLongClicked(Entry entry);
     }
 }

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.IntDef;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
@@ -13,13 +14,17 @@ import android.view.View;
 import rtdsd.groupwork.sharedjournal.DialogFragments.AddElementDialogFragment;
 import rtdsd.groupwork.sharedjournal.DialogFragments.BaseAppDialogFragment;
 import rtdsd.groupwork.sharedjournal.DialogFragments.EditDeleteDialogFragment;
+import rtdsd.groupwork.sharedjournal.DialogFragments.EditEntryFragment;
+import rtdsd.groupwork.sharedjournal.model.Entry;
 import rtdsd.groupwork.sharedjournal.model.Session;
+import rtdsd.groupwork.sharedjournal.viewmodel.FireBaseEntryCommunication;
 
 public class SessionsActivity extends BaseActivity implements
         SessionsFragment.OnSessionsFragmentInteractionListener,
         EntriesFragment.OnEntriesFragmentInteractionListener,
         BaseAppDialogFragment.OnDialogFragmentInteraction,
-        EditDeleteDialogFragment.onEditDeleteFragmentInteraction{
+        EditDeleteDialogFragment.onEditDeleteFragmentInteraction,
+        EditEntryFragment.OnEditFragmentInteraction{
 
     private final String TAG = "SessionsActivity";
     public static final String EXTRA_JOURNAL_ID = "journalId";
@@ -29,6 +34,7 @@ public class SessionsActivity extends BaseActivity implements
     private static final String ADD_SESSION_FRAGMENT_TAG = "addSessionFragmentTag";
     private static final String ADD_ENTRY_FRAGMENT_TAG = "addEntryFragmentTag";
     private static final String EDIT_DELETE_FRAGMENT_TAG = "editDeleteFragmentTag";
+    private static final String EDIT_ENTRY_FRAGMENT_TAG = "editEntryFragmentTag";
 
     private String journalId;
 
@@ -117,7 +123,7 @@ public class SessionsActivity extends BaseActivity implements
 
     //interface implementation for BaseAppDialogFragment
     @Override
-    public void onDialogOkButtonClicked(String editTextContents) {
+    public void onBaseAppDialogOkButtonClicked(String editTextContents) {
         if(activeFragment == SESSIONS_FRAGMENT_ACTIVE) {
             ((SessionsFragment) getSupportFragmentManager()
                     .findFragmentByTag(SESSIONS_FRAGMENT_TAG))
@@ -132,10 +138,12 @@ public class SessionsActivity extends BaseActivity implements
 
     //interface implementation for EntriesFragment
     @Override
-    public void onElementLongClicked(String id) {
+    public void onElementLongClicked(Entry entry) {
         //launch the dialogfragment to show edit / delete buttons
         Bundle args = new Bundle();
-        args.putString(EditDeleteDialogFragment.ELEMENT_INTERACTION_ID, id);
+        args.putString(EditDeleteDialogFragment.ELEMENT_INTERACTION_ID, entry.getId());
+        args.putString(EditDeleteDialogFragment.ELEMENT_INTERACTION_TITLE, entry.getEntryTitle());
+        args.putString(EditDeleteDialogFragment.ELEMENT_INTERACTION_BODY, entry.getEntryBody());
         DialogFragment editDeleteFragment = new EditDeleteDialogFragment();
         editDeleteFragment.setArguments(args);
         editDeleteFragment.show(getSupportFragmentManager(), EDIT_DELETE_FRAGMENT_TAG);
@@ -143,18 +151,65 @@ public class SessionsActivity extends BaseActivity implements
 
     //interface implementation for EditDeleteDialogFragment
     @Override
-    public void onEditClicked(String id) {
-        Log.d(TAG, "onEditClicked: you seem to have long clicked element with id " + id);
-        //edit the dialogfragment contents to show edit
+    public void onEditEntryClicked(String id, String title, String body) {
+        Log.d(TAG, "onEditEntryClicked: you seem to have long clicked element with id " + id);
+        dismissEditDeleteFragment();
 
-        //maybe just a cross-fade between the new
+        //show a new fragment that has the title and body of entry as editable text
+        Bundle args = new Bundle();
+        args.putString(EditEntryFragment.ARG_ENTRY_BODY, body);
+        args.putString(EditEntryFragment.ARG_ENTRY_TITLE, title);
+        args.putString(EditEntryFragment.ARG_ENTRY_ID, id);
+        DialogFragment editFragment = new EditEntryFragment();
+        editFragment.setArguments(args);
+        editFragment.show(getSupportFragmentManager(), EDIT_ENTRY_FRAGMENT_TAG);
+    }
+
+    private void dismissEditDeleteFragment(){
+        //first find the fragment
+        Fragment editDeleteFragment =
+                getSupportFragmentManager().findFragmentByTag(EDIT_DELETE_FRAGMENT_TAG);
+        //if found, remove it
+        if(editDeleteFragment != null)
+            getSupportFragmentManager().beginTransaction().remove(editDeleteFragment).commit();
     }
 
     @Override
-    public void onDeleteClicked(String id) {
-        Log.d(TAG, "onDeleteClicked: you seem to have long clicked element with id " + id);
-        //edit the dialogfragment contents to warn the user of the delete
+    public void onDeleteEntryClicked(String id) {
+        Log.d(TAG, "onDeleteEntryClicked: you seem to have long clicked element with id " + id);
+        //just delete the entry. No need to warn the user of immediate DOOOOOOOM!
+        dismissEditDeleteFragment();
+        EntriesFragment entriesFragment =
+                (EntriesFragment) getSupportFragmentManager().findFragmentByTag(ENTRIES_FRAGMENT_TAG);
+        entriesFragment.getFirebaseInstance().deleteEntry(id);
+
     }
+
+    //OnEditFragmentInteraction interface
+    @Override
+    public void onEditEntryOkClicked(String id, String newTitle, String newBody) {
+        EntriesFragment entriesFragment =
+                (EntriesFragment) getSupportFragmentManager().findFragmentByTag(ENTRIES_FRAGMENT_TAG);
+        Entry originalEntry = entriesFragment.getEntryById(id);
+
+        if((!originalEntry.getEntryTitle().equals(newTitle)) ||
+                !originalEntry.getEntryBody().equals(newBody)){
+
+            //if either body or title have changed, just save both
+            originalEntry.setEntryTitle(newTitle);
+            originalEntry.setEntryBody(newBody);
+            //tell the fragment (that can tell the adapter) that an entry has been changed
+            entriesFragment.entryChanged(originalEntry);
+            //get firebase instance from the entries fragment
+            FireBaseEntryCommunication firebaseInstance = entriesFragment.getFirebaseInstance();
+            //pass the instance the edited entry, new title and body
+            firebaseInstance.editEntry(originalEntry);
+        }
+
+
+    }
+
+
 
     //fab onClickListener implementations
     class FabAddEntryClickListener implements View.OnClickListener{
@@ -170,6 +225,8 @@ public class SessionsActivity extends BaseActivity implements
             addEntryFragment.show(getSupportFragmentManager(), ADD_ENTRY_FRAGMENT_TAG);
         }
     }
+
+
 
     class FabAddSessionClickListener implements View.OnClickListener{
         @Override
@@ -187,4 +244,5 @@ public class SessionsActivity extends BaseActivity implements
             addJournalFragment.show(getSupportFragmentManager(), ADD_SESSION_FRAGMENT_TAG);
         }
     }
+
 }

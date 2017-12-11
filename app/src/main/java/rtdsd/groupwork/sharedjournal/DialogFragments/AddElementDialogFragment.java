@@ -80,7 +80,7 @@ public class AddElementDialogFragment extends BaseAppDialogFragment {
     public void onOkButtonPressed(String editTextContents) {
         if (mListener != null) {
             Log.d(TAG, "onOkButtonPressed: ok clicked, journal name is " + editTextContents);
-            mListener.onDialogOkButtonClicked(editTextContents);
+            mListener.onBaseAppDialogOkButtonClicked(editTextContents);
         }
     }*/
 
