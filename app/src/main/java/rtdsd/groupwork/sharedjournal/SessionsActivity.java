@@ -10,6 +10,9 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+
+import rtdsd.groupwork.sharedjournal.nearbyFragment.JournalSharingFragment;
 
 import rtdsd.groupwork.sharedjournal.DialogFragments.AddElementDialogFragment;
 import rtdsd.groupwork.sharedjournal.DialogFragments.BaseAppDialogFragment;
@@ -37,6 +40,7 @@ public class SessionsActivity extends BaseActivity implements
     private static final String EDIT_ENTRY_FRAGMENT_TAG = "editEntryFragmentTag";
 
     private String journalId;
+    private Button shareJournalButton;
 
     private FloatingActionButton fab;
     private Toolbar toolbar;
@@ -55,6 +59,8 @@ public class SessionsActivity extends BaseActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sessions);
 
+        shareJournalButton = findViewById(R.id.journal_share_button);
+
         journalId = getIntent().getStringExtra(EXTRA_JOURNAL_ID);
         activeFragment = ENTRIES_FRAGMENT_ACTIVE;
 
@@ -68,6 +74,18 @@ public class SessionsActivity extends BaseActivity implements
         SessionsFragment sessionsFragment = SessionsFragment.newInstance(journalId,"");
         transaction.add(R.id.fragmentLayout, sessionsFragment, SESSIONS_FRAGMENT_TAG);
         transaction.commit();
+
+
+        shareJournalButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Fragment sharingFragment = new JournalSharingFragment();
+                FragmentTransaction shareButtonTransaction = getSupportFragmentManager().beginTransaction();
+                shareButtonTransaction.replace(R.id.fragmentLayout, sharingFragment);
+                shareButtonTransaction.addToBackStack(null);
+                shareButtonTransaction.commit();
+            }
+        });
     }
 
     @Override
