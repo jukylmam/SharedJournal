@@ -68,7 +68,7 @@ public class MainActivity extends BaseActivity
             List<AuthUI.IdpConfig> providers = Arrays.asList(
                     new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()
             );
-
+            //start the authentication UI stuff
             startActivityForResult(
                     AuthUI.getInstance()
                         .createSignInIntentBuilder()
@@ -78,6 +78,7 @@ public class MainActivity extends BaseActivity
             );
         }
         else{
+            //continue setting up the activity
             setupActivityUi();
         }
     }
@@ -90,7 +91,10 @@ public class MainActivity extends BaseActivity
             IdpResponse response = IdpResponse.fromResultIntent(data);
 
             if(resultCode == RESULT_OK){
+                //grab the logged in user
                 user = firebaseAuth.getCurrentUser();
+                //continue setting up activity UI
+                setupActivityUi();
             }
             else{
                 Log.d(TAG, "onActivityResult: user authentication failed");
