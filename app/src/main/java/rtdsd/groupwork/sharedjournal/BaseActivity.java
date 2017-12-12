@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import net.danlew.android.joda.JodaTimeAndroid;
 
 /**
@@ -12,10 +14,12 @@ import net.danlew.android.joda.JodaTimeAndroid;
  */
 public class BaseActivity extends AppCompatActivity {
 
+    protected FirebaseAuth firebaseAuth;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         JodaTimeAndroid.init(this);
+        firebaseAuth = FirebaseAuth.getInstance();
     }
 }

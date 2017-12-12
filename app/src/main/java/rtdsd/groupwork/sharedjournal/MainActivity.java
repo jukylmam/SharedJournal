@@ -15,7 +15,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.IdpResponse;
+import com.firebase.ui.auth.ResultCodes;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import rtdsd.groupwork.sharedjournal.DialogFragments.AddElementDialogFragment;
 import rtdsd.groupwork.sharedjournal.DialogFragments.BaseAppDialogFragment;
@@ -36,7 +43,10 @@ public class MainActivity extends BaseActivity
 
     private final String ADD_JOURNAL_FRAGMENT_TAG = "addJournalFragment";
 
+    private final int REQUEST_CODE_SIGN_IN = 1;
+
     FireBaseJournalCommunication firebaseJournalReference;
+    private FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,8 +57,48 @@ public class MainActivity extends BaseActivity
     @Override
     protected void onResume() {
         super.onResume();
+
         firebaseJournalReference = new FireBaseJournalCommunication();
 
+        //check firebase authentication
+        user = firebaseAuth.getCurrentUser();
+        //user not logged in
+        if(user == null){
+            //only use google sign-in
+            List<AuthUI.IdpConfig> providers = Arrays.asList(
+                    new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()
+            );
+
+            startActivityForResult(
+                    AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setAvailableProviders(providers)
+                        .build(),
+                    REQUEST_CODE_SIGN_IN
+            );
+        }
+        else{
+            setupActivityUi();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == REQUEST_CODE_SIGN_IN){
+            IdpResponse response = IdpResponse.fromResultIntent(data);
+
+            if(resultCode == RESULT_OK){
+                user = firebaseAuth.getCurrentUser();
+            }
+            else{
+                Log.d(TAG, "onActivityResult: user authentication failed");
+            }
+        }
+    }
+
+    private void setupActivityUi(){
         recyclerView = findViewById(R.id.mainactivity_recyclerview);
         final JournalsRecyclerAdapter adapter = new JournalsRecyclerAdapter(new ArrayList<RpgJournal>());
         recyclerView.setAdapter(adapter);
