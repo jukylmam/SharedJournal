@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
@@ -13,11 +14,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
-import com.firebase.ui.auth.ResultCodes;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
@@ -28,18 +29,18 @@ import rtdsd.groupwork.sharedjournal.DialogFragments.AddElementDialogFragment;
 import rtdsd.groupwork.sharedjournal.DialogFragments.BaseAppDialogFragment;
 import rtdsd.groupwork.sharedjournal.model.RpgJournal;
 import rtdsd.groupwork.sharedjournal.nearbyFragment.JournalScanningActivity;
-import rtdsd.groupwork.sharedjournal.nearbyFragment.JournalSharingFragment;
 import rtdsd.groupwork.sharedjournal.recyclerViewAdapters.JournalsRecyclerAdapter;
 import rtdsd.groupwork.sharedjournal.viewmodel.FireBaseJournalCommunication;
 import rtdsd.groupwork.sharedjournal.viewmodel.JournalViewModel;
 
 public class MainActivity extends BaseActivity
-        implements BaseAppDialogFragment.OnDialogFragmentInteraction {
+        implements BaseAppDialogFragment.OnDialogFragmentInteraction, FirebaseAuth.AuthStateListener{
 
     private final String TAG = "MainActivity";
-    private TextView textView;
     private RecyclerView recyclerView;
     private FloatingActionButton fab;
+
+    private Toast signStateToast;
 
     private final String ADD_JOURNAL_FRAGMENT_TAG = "addJournalFragment";
 
@@ -51,6 +52,7 @@ public class MainActivity extends BaseActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
     }
 
@@ -58,29 +60,36 @@ public class MainActivity extends BaseActivity
     protected void onResume() {
         super.onResume();
 
+        firebaseAuth.addAuthStateListener(this);
+
         firebaseJournalReference = new FireBaseJournalCommunication();
 
-        //check firebase authentication
-        user = firebaseAuth.getCurrentUser();
-        //user not logged in
-        if(user == null){
-            //only use google sign-in
-            List<AuthUI.IdpConfig> providers = Arrays.asList(
-                    new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()
-            );
-            //start the authentication UI stuff
-            startActivityForResult(
-                    AuthUI.getInstance()
-                        .createSignInIntentBuilder()
-                        .setAvailableProviders(providers)
-                        .build(),
-                    REQUEST_CODE_SIGN_IN
-            );
-        }
-        else{
-            //continue setting up the activity
+        if(firebaseAuth.getCurrentUser() != null){
             setupActivityUi();
         }
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        firebaseAuth.removeAuthStateListener(this);
+    }
+
+    private void userSignIn() {
+        //only use email sign in
+        List<AuthUI.IdpConfig> providers = Arrays.asList(
+                new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build()
+        );
+        //start the authentication UI stuff
+        startActivityForResult(
+                AuthUI.getInstance()
+                    .createSignInIntentBuilder()
+                    .setAvailableProviders(providers)
+                    .build(),
+                REQUEST_CODE_SIGN_IN
+        );
     }
 
     @Override
@@ -144,14 +153,37 @@ public class MainActivity extends BaseActivity
 
         if(item.getItemId() == R.id.scan_journals){
             Log.d(TAG, "onOptionsItemSelected: should open scan journals stuff now");
-            // TODO: 11/2/17 add open scan stuff here Niko
             Intent i = new Intent(this, JournalScanningActivity.class);
             startActivity(i);
 
             return true;
         }
 
+        if(item.getItemId() == R.id.user_sign_out){
+            Log.d(TAG, "onOptionsItemSelected: user should be signed out now");
+
+            if (firebaseAuth.getCurrentUser() == null){
+                signStateToast = Toast.makeText(this, R.string.sign_out_failed_toast, Toast.LENGTH_SHORT);
+                signStateToast.show();
+            }
+
+            if (firebaseAuth.getCurrentUser() != null){
+                firebaseAuth.signOut();
+                signStateToast = Toast.makeText(this, R.string.sign_out_toast, Toast.LENGTH_SHORT);
+                signStateToast.show();
+            }
+
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+        if(firebaseAuth.getCurrentUser() == null){
+            userSignIn();
+        }
     }
 
     private class fabOnClickListener implements View.OnClickListener{

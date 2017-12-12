@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item android:id="@+id/scan_journals"
-        android:icon="@drawable/ic_airplanemode_active_white_24dp"
+        android:icon="@drawable/ic_nearby_white_drawable_48dp"
         android:title="@string/main_menu_scan_journals"
-        app:showAsAction="always"/>
+        app:showAsAction="ifRoom"/>
+
+    <item android:id="@+id/user_sign_out"
+        android:icon="@drawable/ic_add_black_24dp"
+        android:title="@string/main_menu_user_sign_out"
+        app:showAsAction="ifRoom"/>
 
 </menu>
