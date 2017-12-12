@@ -90,6 +90,7 @@ public class MainActivity extends BaseActivity
                     .build(),
                 REQUEST_CODE_SIGN_IN
         );
+
     }
 
     @Override
