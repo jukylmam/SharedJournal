@@ -52,14 +52,14 @@ class JournalLiveData extends LiveData<ArrayList<RpgJournal>> {
 
     @Override
     protected void onActive() {
-        DatabaseReference reference = database.getReference("journals");
+        DatabaseReference reference = database.getReference().child("journals");
         Log.d(TAG, "onActive: " + reference.toString());
         reference.addChildEventListener(childEventListener);
     }
 
     @Override
     protected void onInactive() {
-        DatabaseReference reference = database.getReference("journals");
+        DatabaseReference reference = database.getReference().child("journals");
         Log.d(TAG, "onInactive: " + reference.toString());
         reference.removeEventListener(childEventListener);
     }

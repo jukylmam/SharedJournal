@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -39,6 +40,8 @@ public class MainActivity extends BaseActivity
     private final String TAG = "MainActivity";
     private RecyclerView recyclerView;
     private FloatingActionButton fab;
+    private AppCompatButton loginButton;
+    JournalsRecyclerAdapter adapter;
 
     private Toast signStateToast;
 
@@ -113,8 +116,10 @@ public class MainActivity extends BaseActivity
     }
 
     private void setupActivityUi(){
+
         recyclerView = findViewById(R.id.mainactivity_recyclerview);
-        final JournalsRecyclerAdapter adapter = new JournalsRecyclerAdapter(new ArrayList<RpgJournal>());
+
+        adapter = new JournalsRecyclerAdapter(new ArrayList<RpgJournal>());
         recyclerView.setAdapter(adapter);
         LinearLayoutManager manager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(manager);
@@ -127,20 +132,22 @@ public class MainActivity extends BaseActivity
             @Override
             public void onChanged(@Nullable ArrayList<RpgJournal> journals) {
                 if(journals != null){
-                    /*for(RpgJournal journal : journals){
-                        //journal.getName();
-                        adapter.addItem(journal);
-                    }*/
+                /*for(RpgJournal journal : journals){
+                    //journal.getName();
+                    adapter.addItem(journal);
+                }*/
                     adapter.setJournals(journals);
                 }
-                /*if(strings != null){
-                    for (RpgJournal journal: strings) {
-                        Log.d(TAG, "message: " + journal.getName());
-                        textView.setText(journal.getName());
-                    }
-                }*/
+            /*if(strings != null){
+                for (RpgJournal journal: strings) {
+                    Log.d(TAG, "message: " + journal.getName());
+                    textView.setText(journal.getName());
+                }
+            }*/
             }
         });
+
+
     }
 
     @Override
@@ -161,18 +168,21 @@ public class MainActivity extends BaseActivity
         }
 
         if(item.getItemId() == R.id.user_sign_out){
-            Log.d(TAG, "onOptionsItemSelected: user should be signed out now");
 
-            if (firebaseAuth.getCurrentUser() == null){
-                signStateToast = Toast.makeText(this, R.string.sign_out_failed_toast, Toast.LENGTH_SHORT);
-                signStateToast.show();
-            }
+            if(firebaseAuth.getCurrentUser() != null){
+                Log.d(TAG, "onOptionsItemSelected: user should be signed out now");
 
-            if (firebaseAuth.getCurrentUser() != null){
                 firebaseAuth.signOut();
+                adapter.emptyList();
                 signStateToast = Toast.makeText(this, R.string.sign_out_toast, Toast.LENGTH_SHORT);
                 signStateToast.show();
             }
+            else {
+                Log.d(TAG, "onOptionsItemSelected: user should be signed in now");
+
+                userSignIn();
+            }
+
 
             return true;
         }
@@ -183,7 +193,7 @@ public class MainActivity extends BaseActivity
     @Override
     public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
         if(firebaseAuth.getCurrentUser() == null){
-            userSignIn();
+            //userSignIn();
         }
     }
 
@@ -209,4 +219,5 @@ public class MainActivity extends BaseActivity
         Log.d(TAG, "onBaseAppDialogOkButtonClicked: mainactivity got journal name:" + editTextContents);
         firebaseJournalReference.addJournal(editTextContents);
     }
+
 }

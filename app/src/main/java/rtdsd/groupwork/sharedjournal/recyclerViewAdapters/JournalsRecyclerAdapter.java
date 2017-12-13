@@ -33,6 +33,10 @@ public class JournalsRecyclerAdapter extends RecyclerView.Adapter<JournalsRecycl
         this.journals = journals;
     }
 
+    public void emptyList(){
+        journals.clear();
+        notifyDataSetChanged();
+    }
 
     public void setJournals(final ArrayList<RpgJournal> newJournals) {
 
